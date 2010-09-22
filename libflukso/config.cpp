@@ -1,6 +1,6 @@
 #include "config.hpp"
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <popt.h>
 
 using namespace Flukso;
@@ -57,6 +57,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	std::cerr << "Commandline Parsing failed: " 
 	  << poptBadOption(optCon, POPT_BADOPTION_NOALIAS) 
 	  << ": " <<poptStrerror(poptRC) << std::endl;
+	poptFreeContext(optCon);
 	exit(10);
   }
 
@@ -109,10 +110,11 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	retval->setTimeInterval(std::string(configData.interval));
   }
 
-  if (retval->debug()) {
+  if (retval->verbose()) {
 	retval->printConfig();
   }
 
+  poptFreeContext(optCon);
   return retval;
 }
 
