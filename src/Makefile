@@ -1,6 +1,5 @@
-CC=g++
-LIBRARY_PATH=/p/hpc/smartenergy/md/libraries
-CFLAGS=-c -Wall -I. -I$(LIBRARY_PATH)/include -std=c++0x -pedantic -fPIC -O3
+include ../Makefile.inc
+CFLAGS+=-I$(LIBRARY_PATH)/include
 #LDFLAGS=-static
 LDFLAGS=-L$(LIBRARY_PATH)/lib -ljson -lcurl -lpopt
 SOURCES=flukso-checkhealth.cpp
