@@ -18,6 +18,7 @@ namespace Flukso {
 	  Webservice (const Webservice& original);
 	  Webservice& operator= (const Webservice& rhs);
 	  CURLcode run_query();
+    int parse_json_data(const char* inputData);
 
 	  Config::Ptr _config;
   };

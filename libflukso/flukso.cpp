@@ -5,33 +5,23 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
-
+#include <vector>
+#include <json/json.h>
 
 using namespace Flukso;
 
-
-void Webservice::get_values() {
-  CURLcode errcode = run_query();
-  if (errcode) {
-	std::cout << "Encountered CURL error " << errcode << 
-	  ": " << curl_easy_strerror(errcode) << std::endl;
-	//TODO: Propagate error to main. Think about error model.
-	// How to handle reconnects?
-  } 
-
-  //TODO: Decode JSON.
-}
+static std::vector<int> keyData;
+static std::vector<int> valueData;
 
 // Write any errors in here
 static char errorBuffer[CURL_ERROR_SIZE];
-
 // Write all expected data in here
 static std::string buffer;
-
+// contains http response code
+static long http_code = 0;
 // This is the writer call back function used by curl
 static int writer(char *data, size_t size, size_t nmemb,
-                  std::string *buffer)
-{
+                  std::string *buffer) {
   // What we will return
   int result = 0;
 
@@ -48,62 +38,148 @@ static int writer(char *data, size_t size, size_t nmemb,
   return result;
 }
 
+/**
+ * Callable from the outside - triggers HTTP retrieval and decoding 
+ * of data.
+ */
+void Webservice::get_values() {
+  CURLcode errcode = run_query();
+  if (errcode) {
+    std::cout << "Encountered CURL error " << errcode << 
+      ": " << curl_easy_strerror(errcode) << std::endl;
+    //TODO: Propagate error to main. Think about error model.
+    // How to handle reconnects?
+  } 
+
+  //TODO: Decode JSON.
+  int json_errcode = parse_json_data(buffer.c_str());
+}
+
+int Webservice::parse_json_data(const char* inputData) {
+  struct json_object *myJSONobj;
+  struct json_object *myCurrent;
+  struct json_object *myCurrentElement;
+  unsigned int length;
+
+  myJSONobj = json_tokener_parse(inputData);
+  length = json_object_array_length(myJSONobj);
+
+  if (_config->debug())
+    std::cout << "Data length: " << length << " bytes" << std::endl;
+
+  // Continue if we have elements
+  if (length > 0) {
+    // Walk through all entries
+    for (unsigned int i = 0; i < length; i++) {
+      // Get an entries
+      myCurrent = json_object_array_get_idx(myJSONobj, i);
+      // Is the current entry an array?
+      if (json_object_get_type(myCurrent) != json_type_array) {
+        std::cerr << "Error decoding JSON data. Aborting." << std::endl;
+        return 1;
+      }
+
+      // Has it two elements?
+      if (json_object_array_length(myCurrent) != 2) {
+        std::cerr << "Array element malformed. Expected two elements but got " 
+          << json_object_array_length(myCurrent) << ": "
+          << json_object_get_string(myCurrent) << std::endl;
+        continue;
+      }
+
+      myCurrentElement = json_object_array_get_idx(myCurrent, 0);
+      if (json_object_get_type(myCurrentElement) != json_type_int) {
+        std::cerr << "First array element is not an integer at entry" << i << ": " 
+          << json_object_get_string(myCurrent);
+        keyData.push_back(-1);
+        continue;
+      }
+
+      keyData.push_back(json_object_get_int(myCurrentElement));
+
+      myCurrentElement = json_object_array_get_idx(myCurrent, 1);
+      if (json_object_get_type(myCurrentElement) == json_type_int) {
+        valueData.push_back(json_object_get_int(myCurrentElement));
+      } else if (json_object_get_type(myCurrentElement) == json_type_string) {
+        valueData.push_back(-1);
+      } else {
+        std::cerr << "Second array element is neither string or integer at entry" << i
+          << ": " << json_object_get_string(myCurrent);
+        valueData.push_back(-1);
+        continue;
+      }
+    }
+  } else {
+    std::cerr << "Tokenizing JSON response failed. Aborting." << std::endl;
+    return 1;
+  }
+
+  return 0;
+}
+
+
+
 CURLcode Webservice::run_query() {
   CURL *curl;
   CURLcode result;
   struct curl_slist *slist = NULL;
+  http_code = 0;
 
   std::ostringstream oss;
   oss << _config->getBaseurl() << _config->getSensorId()
-	<< "?interval=" << _config->getTimeInterval() 
-	<< "&unit=" << _config->getUnit();
+    << "?interval=" << _config->getTimeInterval() 
+    << "&unit=" << _config->getUnit();
   std::string url(oss.str());
   if (_config->verbose()) 
-	std::cout << "Query url: " << url << std::endl;
+    std::cout << "Query url: " << url << std::endl;
 
   curl = curl_easy_init();
   if (curl) {
-	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	// Disable Peer Verification
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);  
-	// Adding Headers
-	slist = curl_slist_append(slist, "Accept: application/json");
-	slist = curl_slist_append(slist, "X-Version: 1.0");
-	oss.flush();
-	oss << "X-Token: " << _config->getTokenId();
-	slist = curl_slist_append(slist, oss.str().c_str());
-	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    // Disable Peer Verification
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);  
+    // Adding Headers
+    slist = curl_slist_append(slist, "Accept: application/json");
+    slist = curl_slist_append(slist, "X-Version: 1.0");
+    std::ostringstream oss2;
+    oss2 << "X-Token: " << _config->getTokenId();
+    std::string token_header(oss2.str());
+    //std::cout << "Token header: " << token_header << std::endl;
+    slist = curl_slist_append(slist, token_header.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 
-	// Forward received data to own function
-	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+    // Forward received data to own function
+    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
 
-	// Performing request
-	if (_config->debug())
-	  std::cout << "Connecting to server and fetching data ...";
-	result = curl_easy_perform(curl);
-	if (_config->debug())
-	  std::cout << "finished." << std::endl;
+    // Performing request
+    if (_config->debug())
+      std::cout << "Connecting to server and fetching data ...";
+    result = curl_easy_perform(curl);
+    if (_config->debug())
+      std::cout << "finished." << std::endl;
 
-	long http_code = 0;
-	curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
-	if (http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK) {
-	  if (_config->verbose()) {
-		std::cout << "HTTP connection succeeded" << std::endl;
-		std::cout << "Server data:" << std::endl;
-		std::cout << buffer << std::endl;
-	  }
-	} else {
-	  if (_config->verbose()) {
-		std::cout << "HTTP Error: [CURL: " << result << ", " 
-		  << curl_easy_strerror(result) << "] - " << errorBuffer;
-		std::cout << "Server data:" << std::endl;
-		std::cout << buffer << std::endl;
-	  }
-	}
+    curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+    if (_config->verbose()) {
+      std::cout << "HTTP response code: " << http_code << std::endl;
+    }
+    if (http_code == 200 && result != CURLE_ABORTED_BY_CALLBACK) {
+      if (_config->verbose()) {
+        std::cout << "HTTP connection succeeded" << std::endl;
+        std::cout << "Server data:" << std::endl;
+        std::cout << buffer << std::endl;
+      }
+    } else {
+      if (_config->verbose()) {
+        std::cout << "HTTP failed: [CURL: " << result << ", " 
+          << curl_easy_strerror(result) << "] - " << errorBuffer;
+        std::cout << "Response body:" << std::endl;
+        std::cout << buffer << std::endl;
+      }
+    }
 
   }
   // Cleaning up
