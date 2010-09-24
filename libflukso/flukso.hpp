@@ -17,7 +17,7 @@ namespace Flukso {
       typedef std::tr1::shared_ptr<Webservice> Ptr;
       Webservice(Config::Ptr config): _config(config) {};
       virtual ~Webservice() {};
-      void get_values() throw(Flukso::GenericException);
+      TimeseriesPtr get_values() throw(Flukso::GenericException);
 
     private:
       Webservice (const Webservice& original);

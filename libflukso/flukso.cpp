@@ -42,14 +42,10 @@ static int writer(char *data, size_t size, size_t nmemb,
  * Callable from the outside - triggers HTTP retrieval and decoding 
  * of data.
  */
-void Webservice::get_values() throw (Flukso::GenericException) {
+TimeseriesPtr Webservice::get_values() throw (Flukso::GenericException) {
   run_query();
     //Decode JSON.
-  TimeseriesPtr ts= parse_json_data(buffer.c_str());
-  Timeseries::iterator ts_it;
-  for( ts_it = ts->begin(); ts_it != ts->end(); ts_it++) {
-    std::cout << (*ts_it).first << "\t" << (*ts_it).second << std::endl;
-  }
+  return parse_json_data(buffer.c_str());
 }
 
 TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::DataFormatException) {
