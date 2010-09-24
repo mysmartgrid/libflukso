@@ -22,7 +22,7 @@ namespace Flukso {
     private:
       Webservice (const Webservice& original);
       Webservice& operator= (const Webservice& rhs);
-      void run_query() throw(Flukso::CommunicationException);
+      void run_query(std::string* buffer) throw(Flukso::CommunicationException);
       TimeseriesPtr parse_json_data(const char* inputData) throw (Flukso::DataFormatException);
 
       Config::Ptr _config;

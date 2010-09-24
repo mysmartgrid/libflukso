@@ -15,3 +15,7 @@ Flukso like this:
 The sensor and token match to the "official" Flukso of Fraunhofer ITWMs
 CC-HPC. It can be used for development.
 
+TODO:
+ - Implement XML/JSON exporter hierarchy (visitor pattern)
+ - remove static code use
+ - use cmake as a build tool

@@ -10,44 +10,37 @@
 
 using namespace Flukso;
 
-static std::vector<int> keyData;
-static std::vector<int> valueData;
-
-// Write any errors in here
-static char errorBuffer[CURL_ERROR_SIZE];
-// Write all expected data in here
-static std::string buffer;
-// contains http response code
-static long http_code = 0;
-// This is the writer call back function used by curl
-static int writer(char *data, size_t size, size_t nmemb,
-                  std::string *buffer) {
-  // What we will return
-  int result = 0;
-
-  // Is there anything in the buffer?
-  if (buffer != NULL)
-  {
-    // Append the data to the buffer
-    buffer->append(data, size * nmemb);
-
-    // How much did we write?
-    result = size * nmemb;
-  }
-
-  return result;
-}
 
 /**
  * Callable from the outside - triggers HTTP retrieval and decoding 
  * of data.
  */
 TimeseriesPtr Webservice::get_values() throw (Flukso::GenericException) {
-  run_query();
+  std::string buffer;
+  run_query(&buffer);
     //Decode JSON.
   return parse_json_data(buffer.c_str());
 }
 
+// This is the writer call back function used by curl
+int writer(char *data, size_t size, size_t nmemb,
+                  std::string *localbuffer) {
+  // What we will return
+  int result = 0;
+  // Is there anything in the buffer?
+  if (localbuffer != NULL)
+  {
+    // Append the data to the buffer
+    localbuffer->append(data, size * nmemb);
+    // How much did we write?
+    result = size * nmemb;
+  }
+  return result;
+}
+
+/**
+ * Parse the JSON data and create a proper timeseries datastructure.
+ */
 TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::DataFormatException) {
   struct json_object *myJSONobj;
   struct json_object *myCurrent;
@@ -88,24 +81,18 @@ TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::
       myCurrentElement = json_object_array_get_idx(myCurrent, 0);
       if (json_object_get_type(myCurrentElement) != json_type_int) {
         std::cerr << "First array element is not an integer at entry" << i << ": " 
-          << json_object_get_string(myCurrent);
-        keyData.push_back(-1);
+          << json_object_get_string(myCurrent) << std::endl;
         continue;
       }
       timestamp=json_object_get_int(myCurrentElement);
-      //keyData.push_back(json_object_get_int(myCurrentElement));
 
       // get value associated with the current timestamp.
       myCurrentElement = json_object_array_get_idx(myCurrent, 1);
       if (json_object_get_type(myCurrentElement) == json_type_int) {
         value = json_object_get_int(myCurrentElement);
-        //valueData.push_back(json_object_get_int(myCurrentElement));
-      } else if (json_object_get_type(myCurrentElement) == json_type_string) {
-        //valueData.push_back(-1);
       } else {
         std::cerr << "Second array element is neither string or integer at entry" << i
-          << ": " << json_object_get_string(myCurrent);
-        //valueData.push_back(-1);
+          << ": " << json_object_get_string(myCurrent) << std::endl;
         continue;
       }
       ts->insert(std::pair<long,long>(timestamp, value));
@@ -117,13 +104,15 @@ TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::
   return ts;
 }
 
-
-
-void Webservice::run_query() throw (Flukso::CommunicationException){
+/**
+ * Wraps CURL in one function call.
+ */
+void Webservice::run_query(std::string* buffer) throw (Flukso::CommunicationException){
   CURL *curl;
   CURLcode result;
+  char errorBuffer[CURL_ERROR_SIZE];
   struct curl_slist *slist = NULL;
-  http_code = 0;
+  long http_code = 0;
 
   std::ostringstream oss;
   oss << _config->getBaseurl() << _config->getSensorId()
@@ -152,7 +141,7 @@ void Webservice::run_query() throw (Flukso::CommunicationException){
 
     // Forward received data to own function
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
 
     // Performing request
@@ -178,7 +167,7 @@ void Webservice::run_query() throw (Flukso::CommunicationException){
         std::cout << "HTTP failed: [CURL: " << result << ", " 
           << curl_easy_strerror(result) << "] - " << errorBuffer;
         std::cout << "Response body:" << std::endl;
-        std::cout << buffer << std::endl;
+        std::cout << *buffer << std::endl;
       }
       // Cleaning up
       curl_easy_cleanup(curl);
