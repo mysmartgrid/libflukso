@@ -42,30 +42,29 @@ static int writer(char *data, size_t size, size_t nmemb,
  * Callable from the outside - triggers HTTP retrieval and decoding 
  * of data.
  */
-void Webservice::get_values() {
-  CURLcode errcode = run_query();
-  if (errcode) {
-    std::cout << "Encountered CURL error " << errcode << 
-      ": " << curl_easy_strerror(errcode) << std::endl;
-    //TODO: Propagate error to main. Think about error model.
-    // How to handle reconnects?
-  } 
-
-  //TODO: Decode JSON.
-  int json_errcode = parse_json_data(buffer.c_str());
+void Webservice::get_values() throw (Flukso::GenericException) {
+  run_query();
+    //Decode JSON.
+  TimeseriesPtr ts= parse_json_data(buffer.c_str());
+  Timeseries::iterator ts_it;
+  for( ts_it = ts->begin(); ts_it != ts->end(); ts_it++) {
+    std::cout << (*ts_it).first << "\t" << (*ts_it).second << std::endl;
+  }
 }
 
-int Webservice::parse_json_data(const char* inputData) {
+TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::DataFormatException) {
   struct json_object *myJSONobj;
   struct json_object *myCurrent;
   struct json_object *myCurrentElement;
   unsigned int length;
+  TimeseriesPtr ts(new Timeseries());
 
   myJSONobj = json_tokener_parse(inputData);
   length = json_object_array_length(myJSONobj);
 
   if (_config->debug())
     std::cout << "Data length: " << length << " bytes" << std::endl;
+
 
   // Continue if we have elements
   if (length > 0) {
@@ -75,8 +74,7 @@ int Webservice::parse_json_data(const char* inputData) {
       myCurrent = json_object_array_get_idx(myJSONobj, i);
       // Is the current entry an array?
       if (json_object_get_type(myCurrent) != json_type_array) {
-        std::cerr << "Error decoding JSON data. Aborting." << std::endl;
-        return 1;
+        throw Flukso::DataFormatException("Error decoding Flukso data - no value array found.");
       }
 
       // Has it two elements?
@@ -87,6 +85,10 @@ int Webservice::parse_json_data(const char* inputData) {
         continue;
       }
 
+      //OK, start your engine
+      long timestamp, value = 0;
+
+      // get timestamp.
       myCurrentElement = json_object_array_get_idx(myCurrent, 0);
       if (json_object_get_type(myCurrentElement) != json_type_int) {
         std::cerr << "First array element is not an integer at entry" << i << ": " 
@@ -94,32 +96,34 @@ int Webservice::parse_json_data(const char* inputData) {
         keyData.push_back(-1);
         continue;
       }
+      timestamp=json_object_get_int(myCurrentElement);
+      //keyData.push_back(json_object_get_int(myCurrentElement));
 
-      keyData.push_back(json_object_get_int(myCurrentElement));
-
+      // get value associated with the current timestamp.
       myCurrentElement = json_object_array_get_idx(myCurrent, 1);
       if (json_object_get_type(myCurrentElement) == json_type_int) {
-        valueData.push_back(json_object_get_int(myCurrentElement));
+        value = json_object_get_int(myCurrentElement);
+        //valueData.push_back(json_object_get_int(myCurrentElement));
       } else if (json_object_get_type(myCurrentElement) == json_type_string) {
-        valueData.push_back(-1);
+        //valueData.push_back(-1);
       } else {
         std::cerr << "Second array element is neither string or integer at entry" << i
           << ": " << json_object_get_string(myCurrent);
-        valueData.push_back(-1);
+        //valueData.push_back(-1);
         continue;
       }
+      ts->insert(std::pair<long,long>(timestamp, value));
+
     }
   } else {
-    std::cerr << "Tokenizing JSON response failed. Aborting." << std::endl;
-    return 1;
+    throw Flukso::DataFormatException("Tokenizing JSON response failed." );
   }
-
-  return 0;
+  return ts;
 }
 
 
 
-CURLcode Webservice::run_query() {
+void Webservice::run_query() throw (Flukso::CommunicationException){
   CURL *curl;
   CURLcode result;
   struct curl_slist *slist = NULL;
@@ -173,17 +177,24 @@ CURLcode Webservice::run_query() {
         std::cout << buffer << std::endl;
       }
     } else {
+      // Communication problem.
       if (_config->verbose()) {
         std::cout << "HTTP failed: [CURL: " << result << ", " 
           << curl_easy_strerror(result) << "] - " << errorBuffer;
         std::cout << "Response body:" << std::endl;
         std::cout << buffer << std::endl;
       }
+      // Cleaning up
+      curl_easy_cleanup(curl);
+      curl_slist_free_all(slist);
+      // Raise a proper exception
+      std::ostringstream eoss;
+      eoss << "Communication error - HTTP response: " << http_code 
+        << ", CURL error " << result << ": " << curl_easy_strerror(result);
+      throw Flukso::CommunicationException(eoss.str());
     }
-
   }
   // Cleaning up
   curl_easy_cleanup(curl);
   curl_slist_free_all(slist);
-  return result;
 }
