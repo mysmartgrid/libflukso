@@ -4,7 +4,7 @@ CFLAGS+=-I$(LIBRARY_PATH)/include
 #LDFLAGS=-static
 LDFLAGS=-L$(LIBRARY_PATH)/lib -L. -ljson -lcurl -lpopt
 SOURCES=flukso-getvalues.cpp
-SOURCES+=flukso.cpp config.cpp
+SOURCES+=flukso.cpp config.cpp exporter-text.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=flukso-getvalues
 

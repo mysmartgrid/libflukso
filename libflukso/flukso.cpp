@@ -159,7 +159,7 @@ void Webservice::run_query(std::string* buffer) throw (Flukso::CommunicationExce
       if (_config->verbose()) {
         std::cout << "HTTP connection succeeded" << std::endl;
         std::cout << "Server data:" << std::endl;
-        std::cout << buffer << std::endl;
+        std::cout << *buffer << std::endl;
       }
     } else {
       // Communication problem.

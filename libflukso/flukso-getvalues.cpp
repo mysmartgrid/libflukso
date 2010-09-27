@@ -1,6 +1,7 @@
 #include <common.hpp>
 #include <flukso.hpp>
 #include <config.hpp>
+#include <exporter-text.hpp>
 #include <iostream>
 
 int main (int argc, char const* argv[]) {
@@ -9,10 +10,8 @@ int main (int argc, char const* argv[]) {
   try {
 	Flukso::TimeseriesPtr ts(webservice->get_values());
 	// TODO: Use exporter abstraction based on config.
-	Flukso::Timeseries::iterator ts_it;
-	for( ts_it = ts->begin(); ts_it != ts->end(); ts_it++) {
-	  std::cout << (*ts_it).first << "\t" << (*ts_it).second << std::endl;
-	}
+	Flukso::TextExporter::Ptr exporter(new Flukso::TextExporter(std::cout));
+	exporter->exportTimeseries(ts);
   } catch (Flukso::GenericException ge) {
 	std::cout << "Failed to retrieve values, reason:" << std::endl 
 	  << "  " << ge.reason() << std::endl;
