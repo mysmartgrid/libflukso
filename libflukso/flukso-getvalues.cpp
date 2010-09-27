@@ -2,6 +2,8 @@
 #include <flukso.hpp>
 #include <config.hpp>
 #include <exporter-text.hpp>
+#include <exporter-xml.hpp>
+#include <exporter.hpp>
 #include <iostream>
 
 int main (int argc, char const* argv[]) {
@@ -10,8 +12,8 @@ int main (int argc, char const* argv[]) {
   try {
 	Flukso::TimeseriesPtr ts(webservice->get_values());
 	// TODO: Use exporter abstraction based on config.
-	Flukso::TextExporter::Ptr exporter(new Flukso::TextExporter(std::cout));
-	exporter->exportTimeseries(ts);
+	Flukso::Exporter::Ptr exporter(new Flukso::XMLExporter(ts));
+	std::cout << *exporter << std::endl;
   } catch (Flukso::GenericException ge) {
 	std::cout << "Failed to retrieve values, reason:" << std::endl 
 	  << "  " << ge.reason() << std::endl;

@@ -3,25 +3,20 @@
 
 #include <iostream>
 #include <flukso.hpp>
+#include <exporter.hpp>
 
 namespace Flukso {
-  class TextExporter {
+  class TextExporter : public Flukso::Exporter {
 	public:
 	  typedef std::tr1::shared_ptr<TextExporter> Ptr;
-	  TextExporter (const std::ostream& os) : _os(os) { };
+	  explicit TextExporter (Flukso::TimeseriesPtr values) 
+		: Flukso::Exporter(values) { };
 	  virtual ~TextExporter() {};
-	  void exportTimeseries(Flukso::TimeseriesPtr values);
-	 /* friend ostream& operator<<(ostream& out, const Vector2D& vec) // output
-	  {
-		out << "(" << vec.x() << ", " << vec.y() << ")";
-		return out;
-	  }*/
-
+	  void exportTimeseries(std::ostream& os) const;
 
 	private:
 	  TextExporter (const TextExporter& original);
 	  TextExporter& operator= (const TextExporter& rhs);
-	  const std::ostream& _os;
   };
 
 }
