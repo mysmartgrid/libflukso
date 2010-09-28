@@ -18,8 +18,9 @@ using namespace Flukso;
 TimeseriesPtr Webservice::get_values() throw (Flukso::GenericException) {
   std::string buffer;
   run_query(&buffer);
-    //Decode JSON.
-  return parse_json_data(buffer.c_str());
+  TimeseriesPtr retval = parse_json_data(buffer.c_str());
+  buffer.clear();
+  return retval;
 }
 
 // This is the writer call back function used by curl
@@ -96,11 +97,15 @@ TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::
         continue;
       }
       ts->insert(std::pair<long,long>(timestamp, value));
-
+      //json_object_put(myCurrentElement);
     }
   } else {
+    // free json memory.
+    json_object_put(myJSONobj);
     throw Flukso::DataFormatException("Tokenizing JSON response failed." );
   }
+  // free json memory.
+  json_object_put(myJSONobj);
   return ts;
 }
 

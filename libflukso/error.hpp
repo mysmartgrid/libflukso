@@ -17,6 +17,15 @@ namespace Flukso {
 	  std::string _reason;
   };
 
+  class ConfigurationException : public GenericException{
+	public:
+	  typedef std::tr1::shared_ptr<ConfigurationException> Ptr;
+	  ConfigurationException (const std::string reason) :
+		Flukso::GenericException(reason) {};
+	  virtual ~ConfigurationException() throw() {};
+
+  };
+
   class CommunicationException : public GenericException{
 	public:
 	  typedef std::tr1::shared_ptr<CommunicationException> Ptr;

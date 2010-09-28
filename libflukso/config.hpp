@@ -15,13 +15,14 @@ namespace Flukso {
 	  Config():
 		_baseurl("https://api.mysmartgrid.de/sensor/"), _sensor("undefined"), 
 		_token("undefined"), _unit("watt"), _interval("hour"), _debug(false),
-		_verbose(false) {};
+		_verbose(false), _exportertype("text") {};
 	  Config (const Config& original);
 	  const std::string& getBaseurl();
 	  const std::string& getSensorId();
 	  const std::string& getTokenId();
 	  const std::string& getUnit();
 	  const std::string& getTimeInterval();
+	  const std::string& getExporterType();
 	  bool debug();
 	  bool verbose();
 	  void setBaseurl(const std::string& baseurl);
@@ -29,6 +30,7 @@ namespace Flukso {
 	  void setTokenId(const std::string& token);
 	  void setUnit(const std::string& unit);
 	  void setTimeInterval(const std::string& interval);
+	  void setExporterType(const std::string& exporter);
 	  void enableDebug();
 	  void enableVerbose();
 
@@ -42,6 +44,7 @@ namespace Flukso {
 	  std::string _interval;
 	  bool _debug;
 	  bool _verbose;
+	  std::string _exportertype;
 
   };
 

@@ -13,6 +13,7 @@ namespace Flukso {
 		: Flukso::Exporter(values) {};
 	  virtual ~XMLExporter() {};
 	  void exportTimeseries(std::ostream& os) const;
+	  virtual const std::string getType() const {return std::string("xml"); };
 
 	private:
 	  XMLExporter (const XMLExporter& original);

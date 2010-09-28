@@ -8,11 +8,10 @@
 
 int main (int argc, char const* argv[]) {
   Flukso::Config::Ptr config(Flukso::Config::buildConfigFromCmdLine(argc, argv));
-  Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
   try {
+	Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
 	Flukso::TimeseriesPtr ts(webservice->get_values());
-	// TODO: Use exporter abstraction based on config.
-	Flukso::Exporter::Ptr exporter(new Flukso::XMLExporter(ts));
+	Flukso::Exporter::Ptr exporter = Flukso::Exporter::buildExporter(config, ts);
 	std::cout << *exporter << std::endl;
   } catch (Flukso::GenericException ge) {
 	std::cout << "Failed to retrieve values, reason:" << std::endl 

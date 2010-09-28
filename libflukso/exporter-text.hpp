@@ -13,6 +13,7 @@ namespace Flukso {
 		: Flukso::Exporter(values) { };
 	  virtual ~TextExporter() {};
 	  void exportTimeseries(std::ostream& os) const;
+	  virtual const std::string getType() const {return std::string("text"); };
 
 	private:
 	  TextExporter (const TextExporter& original);

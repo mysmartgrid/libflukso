@@ -4,7 +4,7 @@ CFLAGS+=-I$(LIBRARY_PATH)/include
 #LDFLAGS=-static
 LDFLAGS=-L$(LIBRARY_PATH)/lib -L. -ljson -lcurl -lpopt
 SOURCES=flukso-getvalues.cpp
-SOURCES+=flukso.cpp config.cpp exporter-text.cpp exporter-xml.cpp
+SOURCES+=flukso.cpp config.cpp exporter.cpp exporter-text.cpp exporter-xml.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=flukso-getvalues
 
@@ -15,6 +15,7 @@ $(EXECUTABLE): $(OBJECTS)
 
 # GCC autodepend-fu
 .cpp.o:
+	-echo $(CC) $(CFLAGS) -MD $< -o $@
 	$(CC) $(CFLAGS) -MD $< -o $@
 	@sed 's,\($*\.o\)[ :]*\(.*\),$@ : $$\(wildcard \2\)\n\1 : \2,g' $*.d > /dev/null
 #@sed -i 's,\($*\.o\)[ :]*\(.*\),$@ : $$\(wildcard \2\)\n\1 : \2,g' $*.d

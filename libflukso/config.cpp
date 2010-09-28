@@ -16,6 +16,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	char* sensor;
 	char* baseURL;
 	char* unit;
+	char* format;
 	char* interval;
 	int debug;
 	long int maxAge;
@@ -34,6 +35,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	{ "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
 	  "Time interval to fetch (hour, day, month, year, night)", "interval" },
 	{ "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
+	{ "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml}", "string" },
 	{ "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
 	POPT_AUTOHELP POPT_TABLEEND // Needed to terminate array
   };
@@ -103,6 +105,13 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	retval->setUnit(std::string(configData.unit));
   }
 
+  if (configData.format == NULL) {
+	if (configData.debug)
+	  std::cout << "Format omitted. Using default format text" << std::endl;
+  } else {
+	retval->setExporterType(std::string(configData.format));
+  }
+
   if (configData.interval == NULL) {
 	if (configData.debug)
 	  std::cout << "Intervall omitted. Setting default to hour" << std::endl;
@@ -118,6 +127,8 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
   return retval;
 }
 
+
+
 void Config::printConfig() {
   std::cout << "Using configuration:" << std::endl;
   std::cout << " - base url: " << getBaseurl() << std::endl;
@@ -125,6 +136,7 @@ void Config::printConfig() {
   std::cout << " - token id: " << getTokenId() << std::endl;
   std::cout << " - unit: " << getUnit() << std::endl;
   std::cout << " - time interval: " << getTimeInterval() << std::endl;
+  std::cout << " - format: " << getExporterType() << std::endl;
 }
 
 // getter methods
@@ -133,7 +145,8 @@ const std::string& Config::getBaseurl() { return _baseurl; }
 const std::string& Config::getSensorId() { return _sensor; }
 const std::string& Config::getTokenId() { return _token; }
 const std::string& Config::getUnit() { return _unit; }
-const std::string&  Config::getTimeInterval() { return _interval; }
+const std::string& Config::getTimeInterval() { return _interval; }
+const std::string& Config::getExporterType() { return _exportertype; }
 bool Config::debug() { return _debug; }
 bool Config::verbose() { return _verbose; }
 
@@ -152,6 +165,9 @@ void Config::setUnit(const std::string& unit) {
 }
 void Config::setTimeInterval(const std::string& interval) {
   _interval = interval;
+}
+void Config::setExporterType(const std::string& exporter) {
+  _exportertype = exporter;
 }
 void Config::enableDebug() {
   _debug = true;
