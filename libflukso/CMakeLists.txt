@@ -18,7 +18,10 @@ set(flukso_src ${all_flukso_src})
 ADD_LIBRARY(flukso ${flukso_src})
 
 install(FILES ${hdrs} DESTINATION include/flukso)
-install(TARGETS flukso
-        ARCHIVE DESTINATION lib)
 
+if(BUILD_SHARED_LIBS)
+  install(TARGETS flukso LIBRARY DESTINATION lib)
+else(BUILD_SHARED_LIBS)
+  install(TARGETS flukso ARCHIVE DESTINATION lib)
+endif(BUILD_SHARED_LIBS)
 

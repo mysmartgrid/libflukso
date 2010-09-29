@@ -68,8 +68,14 @@ if (POPT_FOUND)
   include_directories(${POPT_INCLUDE_DIR})
   include_directories(${POPT_INCLUDE_DIRS})
   link_directories(${POPT_LIBRARY_DIR})
-  link_libraries(${POPT_LIBRARY})
-  message(STATUS "POPT: '${POPT_LIBRARY}' -I${POPT_INCLUDE_DIR} -I${POPT_INCLUDE_DIRS}")
+  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # there's a broken popt library in macports right now - only do
+    # dynamic linking. this version seems to be ok.
+    link_libraries(${POPT_LIBRARY_SHARED})
+  ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    link_libraries(${POPT_LIBRARY})
+  ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  message(STATUS "POPT: '${POPT_LIBRARY}'/'${POPT_LIBRARY_SHARED}' -I${POPT_INCLUDE_DIR} -I${POPT_INCLUDE_DIRS}")
 endif(POPT_FOUND)
 
 include(FindJSON)
@@ -81,22 +87,12 @@ if (JSON_FOUND)
   message(STATUS "JSON: '${JSON_LIBRARY}' -I${JSON_INCLUDE_DIR} -I${JSON_INCLUDE_DIRS}")
 endif(JSON_FOUND)
 
-
-#include_directories(${${PROJECT_NAME}_SOURCE_DIR} ${${PROJECT_NAME}_BINARY_DIR})
-#link_directories(${CMAKE_LIBRARY_PATH})
-#link_directories(${${PROJECT_NAME}_BINARY_DIR})
-#
-#link_libraries(-Wl,-Bstatic  -lactivemq-cpp -lpthread -luuid -Wl,-Bdynamic -ldl)
-#link_libraries(libflukso)
-
 # Reflect the package structure
 add_subdirectory(libflukso)
 add_subdirectory(src)
 
 # add some files to the installation target
-INSTALL(FILES README COPYRIGHT
-  DESTINATION share/doc/libflukso)
-
+INSTALL(FILES README LICENSE DESTINATION share/doc/libflukso)
 
 # CPACK packaging
 INCLUDE(InstallRequiredSystemLibraries)

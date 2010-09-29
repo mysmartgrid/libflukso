@@ -1,36 +1,61 @@
 # -*- mode: cmake; -*-
-# Tries to locate a logging framework.
+# locates the json library
 # This file defines:
-# * JSON_FOUND if log4cpp was found
-# * JSON_LIBRARY The lib to link to (currently only a static unix lib, not portable) 
-# * JSON_INCLUDE_DIR The path to the include directory
-# *  PKG_CHECK_MODULE used to set the following variables
-# *
-# *   <PREFIX>_FOUND           ... set to 1 if module(s) exist
-# *   <XPREFIX>_LIBRARIES      ... only the libraries (w/o the '-l')
-# *   <XPREFIX>_LIBRARY_DIRS   ... the paths of the libraries (w/o the '-L')
-# *   <XPREFIX>_LDFLAGS        ... all required linker flags
-# *   <XPREFIX>_LDFLAGS_OTHER  ... all other linker flags
-# *   <XPREFIX>_INCLUDE_DIRS   ... the '-I' preprocessor flags (w/o the '-I')
-# *   <XPREFIX>_CFLAGS         ... all required cflags
-# *   <XPREFIX>_CFLAGS_OTHER   ... the other compiler flags
+# * JSON_FOUND if json was found
+# * JSON_LIBRARY The lib to link to (currently only a static unix lib) 
+# * JSON_INCLUDE_DIR
 
-# *   <XPREFIX> = <PREFIX>_STATIC for static linking
-# *   <XPREFIX>_VERSION    ... version of the module
-# *   <XPREFIX>_PREFIX     ... prefix-directory of the module
-# *   <XPREFIX>_INCLUDEDIR ... include-dir of the module
-# *   <XPREFIX>_LIBDIR     ... lib-dir of the module
-# *   <XPREFIX> = <PREFIX>  when |MODULES| == 1, else
-# *   <XPREFIX> = <PREFIX>_<MODNAME>
+if (NOT JSON_FIND_QUIETLY)
+  message(STATUS "FindJSON check")
+endif (NOT JSON_FIND_QUIETLY)
 
-message(STATUS "FindPopt check")
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-  include(FindPackageHelper)
-  check_package(JSON json/json.h json 0.1)
+  #  include(FindPackageHelper)
+  #  check_package(FhgLog fhglog/fhglog.hpp fhglog 1.0)
+
+  find_path (JSON_INCLUDE_DIR
+    NAMES "json/json.h"
+    HINTS ${JSON_HOME} ENV JSON_HOME
+    PATH_SUFFIXES include
+  )
+
+  find_library (JSON_LIBRARY
+    NAMES libjson.a
+    HINTS ${JSON_HOME} ENV JSON_HOME
+    PATH_SUFFIXES lib
+  )
+
+  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # On MacOS
+    find_library (JSON_LIBRARY_SHARED
+      NAMES libjson.dylib
+      HINTS ${JSON_HOME} ENV JSON_HOME
+      PATH_SUFFIXES lib
+      )
+  ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # On Linux
+    find_library (JSON_LIBRARY_SHARED
+      NAMES libjson.dylib
+      HINTS ${JSON_HOME} ENV JSON_HOME
+      PATH_SUFFIXES lib
+      )
+  ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+
+if (JSON_INCLUDE_DIR AND JSON_LIBRARY)
+  set (JSON_FOUND TRUE)
+  if (NOT JSON_FIND_QUIETLY)
+    message (STATUS "Found json headers in ${JSON_INCLUDE_DIR} and libraries ${JSON_LIBRARY} ${JSON_LIBRARY_SHARED}")
+  endif (NOT JSON_FIND_QUIETLY)
+else (JSON_INCLUDE_DIR AND JSON_LIBRARY)
+  if (JSON_FIND_REQUIRED)
+    message (FATAL_ERROR "json could not be found!")
+  endif (JSON_FIND_REQUIRED)
+endif (JSON_INCLUDE_DIR AND JSON_LIBRARY)
+
 else(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   set(JSON_FOUND true)
-  set(JSON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/json;${CMAKE_BINARY_DIR}/json")
+  set(JSON_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/json ${CMAKE_BINARY_DIR}/json)
   set(JSON_LIBRARY_DIR "")
   set(JSON_LIBRARY json)
 endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-
