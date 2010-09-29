@@ -94,40 +94,25 @@ add_subdirectory(libflukso)
 add_subdirectory(src)
 
 # add some files to the installation target
-INSTALL(FILES README DESTINATION
-  share/doc/libflukso-${V_MAJOR}-${V_MINOR}
-  )
+INSTALL(FILES README COPYRIGHT
+  DESTINATION share/doc/libflukso)
 
 
 # CPACK packaging
-#INCLUDE(InstallRequiredSystemLibraries)
-#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Gridlicense Tools")
-#SET(CPACK_PACKAGE_VENDOR "Fraunhofer ITWM")
-#SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYRIGHT")
-#SET(CPACK_PACKAGE_VERSION_MAJOR ${V_MAJOR})
-#SET(CPACK_PACKAGE_VERSION_MINOR ${V_MINOR})
-#SET(CPACK_PACKAGE_VERSION_PATCH ${V_PATCH})
-#SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-#SET(CPACK_PACKAGE_EXECUTABLES "gl-verifytoken" "Verify an existing token")
-#SET(CPACK_PACKAGE_EXECUTABLES "gl-gentoken" "Create a new token")
-#SET(CPACK_PACKAGE_EXECUTABLES "gl-server" "The server")
-#IF(WIN32 AND NOT UNIX)
-#  # There is a bug in NSI that does not handle full unix paths properly. Make
-#  # sure there is at least one set of four (4) backlasshes.
-#  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-#  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
-#  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
-#  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.my-project-home-page.org")
-#  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.my-personal-home-page.com")
-#  SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
-#  SET(CPACK_NSIS_MODIFY_PATH ON)
-#ELSE(WIN32 AND NOT UNIX)
-#  SET(CPACK_SOURCE_STRIP_FILES "")
-#ENDIF(WIN32 AND NOT UNIX)
-#SET(CPACK_STRIP_FILES "bin/gl-gentoken;bin/gl-verifytoken;bin/gl-server")
-#INCLUDE(CPack)
-#
+INCLUDE(InstallRequiredSystemLibraries)
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Flukso Tools")
+SET(CPACK_PACKAGE_VENDOR "Mathias Dalheimer")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+SET(CPACK_PACKAGE_VERSION_MAJOR ${V_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${V_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${V_PATCH})
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+SET(CPACK_PACKAGE_EXECUTABLES "flukso-getvalues" "Retrieve energy consumption data from a Flukso webservice")
+SET(CPACK_SOURCE_STRIP_FILES "")
+SET(CPACK_STRIP_FILES "bin/flukso-getvalues")
+INCLUDE(CPack)
+
 
 ### print some output for the user
 message("")

@@ -1,21 +1,18 @@
 This little utility is intended to act as a swiss army knife for
 accessing various data and functions build around the Flukso power
-metering device, which is used in the http://www.mysmartgrid.de projekt.
+metering device, which is used in the http://www.mysmartgrid.de projekt. 
+The initial code was developed by Henning Bitsch and then extended 
+by Mathias Dalheimer. It is provided as-is under the terms of the GPLv3
+license.
 
-It is currently in a very early stage and has only a few functions:
+The code depends on json-c, curl and popt. It can be used to retrieve 
+values from a Flukso like this:
 
-1. Output the last valid value delivered to the database on the website
-2. Check the freshness of the delivery process.
+./flukso-getvalue -d -t bb8640e074de14b9d444be7b1359707f -s 67e9fa794684e4902730be208e9d734e -i hour -v -m 3
 
-The code depends on json-c, curl and popt. It can be used to monitor a
-Flukso like this:
-
-./flukso-checkhealth -d -t bb8640e074de14b9d444be7b1359707f -s 67e9fa794684e4902730be208e9d734e -i hour -v -m 3
-
-The sensor and token match to the "official" Flukso of Fraunhofer ITWMs
+The sensor and token above match to the "official" Flukso of Fraunhofer ITWMs
 CC-HPC. It can be used for development.
 
 TODO:
- - Implement XML/JSON exporter hierarchy (visitor pattern)
- - remove static code use
- - use cmake as a build tool
+- Re-integrate Nagios monitoring code (as a separate exporter)
+- Develop chumby daemon  
