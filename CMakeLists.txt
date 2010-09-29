@@ -68,14 +68,16 @@ if (POPT_FOUND)
   include_directories(${POPT_INCLUDE_DIR})
   include_directories(${POPT_INCLUDE_DIRS})
   link_directories(${POPT_LIBRARY_DIR})
-  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # there's a broken popt library in macports right now - only do
-    # dynamic linking. this version seems to be ok.
+  #IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  #  # there's a broken popt library in macports right now - only do
+  #  # dynamic linking. this version seems to be ok.
+  #  link_libraries(${POPT_LIBRARY_SHARED})
+  #ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     link_libraries(${POPT_LIBRARY_SHARED})
-  ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    link_libraries(${POPT_LIBRARY})
-  ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  message(STATUS "POPT: '${POPT_LIBRARY}'/'${POPT_LIBRARY_SHARED}' -I${POPT_INCLUDE_DIR} -I${POPT_INCLUDE_DIRS}")
+	#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  message(STATUS "POPT: '${POPT_LIBRARY}' + '${POPT_LIBRARY_SHARED}' -I${POPT_INCLUDE_DIR} -I${POPT_INCLUDE_DIRS}")
+else(POPT_FOUND)
+  message(STATUS "POPT: No popt library found!")
 endif(POPT_FOUND)
 
 include(FindJSON)
