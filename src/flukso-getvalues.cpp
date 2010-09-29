@@ -22,6 +22,9 @@
 #include <flukso.hpp>
 #include <config.hpp>
 #include <exporter.hpp>
+#include <outputfilter.hpp>
+#include <outputcoutfilter.hpp>
+#include <outputfilefilter.hpp>
 #include <iostream>
 #include <fstream>
 
@@ -31,18 +34,16 @@ int main (int argc, char const* argv[]) {
 	Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
 	Flukso::TimeseriesPtr ts(webservice->get_values());
 	Flukso::Exporter::Ptr exporter = Flukso::Exporter::buildExporter(config, ts);
-	if (true) {
-	  std::cout << *exporter << std::endl;
-	} else {
-	  std::ofstream outfile;
-	  outfile.open ("test.txt", std::ofstream::out | std::ofstream::app);
-	  outfile << *exporter;
-	  outfile.close();
-	}
+	Flukso::OutputFilter::Ptr filter = Flukso::OutputFilter::buildFilter(config);
+	filter->render(exporter);
   } catch (Flukso::GenericException ge) {
 	std::cout << "Failed to retrieve values, reason:" << std::endl 
 	  << "  " << ge.reason() << std::endl;
 	return -1;
+  }	catch (std::exception e) {
+	std::cout << "Unknown exception occured, reason:" << std::endl
+	  << "  " << e.what() << std::endl;
+	return -2;
   }
   return 0;
 }

@@ -34,8 +34,9 @@ namespace Flukso {
 	  void printConfig();
 	  Config():
 		_baseurl("https://api.mysmartgrid.de/sensor/"), _sensor("undefined"), 
-		_token("undefined"), _unit("watt"), _interval("hour"), _debug(false),
-		_verbose(false), _exportertype("text") {};
+		_token("undefined"), _unit("watt"), _interval("hour"),  _exportertype("text"), 
+		_filtertype("cout"), _outfilename("fluksovalues.txt"), _debug(false),
+		_verbose(false) {};
 	  Config (const Config& original);
 	  const std::string& getBaseurl();
 	  const std::string& getSensorId();
@@ -43,6 +44,8 @@ namespace Flukso {
 	  const std::string& getUnit();
 	  const std::string& getTimeInterval();
 	  const std::string& getExporterType();
+	  const std::string& getFilterType();
+	  const std::string& getOutputFilename();
 	  bool debug();
 	  bool verbose();
 	  void setBaseurl(const std::string& baseurl);
@@ -51,6 +54,8 @@ namespace Flukso {
 	  void setUnit(const std::string& unit);
 	  void setTimeInterval(const std::string& interval);
 	  void setExporterType(const std::string& exporter);
+	  void setFilterType(const std::string& filter);
+	  void setOutputFilename(const std::string& filename);
 	  void enableDebug();
 	  void enableVerbose();
 
@@ -62,9 +67,11 @@ namespace Flukso {
 	  std::string _token;
 	  std::string _unit;
 	  std::string _interval;
+	  std::string _exportertype;
+	  std::string _filtertype;
+	  std::string _outfilename;
 	  bool _debug;
 	  bool _verbose;
-	  std::string _exportertype;
 
   };
 

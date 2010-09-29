@@ -37,6 +37,8 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	char* baseURL;
 	char* unit;
 	char* format;
+	char* output;
+	char* filename;
 	char* interval;
 	int debug;
 	long int maxAge;
@@ -56,6 +58,8 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	  "Time interval to fetch (hour, day, month, year, night)", "interval" },
 	{ "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
 	{ "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml}", "string" },
+	{ "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
+	{ "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
 	{ "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
 	POPT_AUTOHELP POPT_TABLEEND // Needed to terminate array
   };
@@ -132,6 +136,18 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	retval->setExporterType(std::string(configData.format));
   }
 
+  if (configData.output == NULL) {
+	if (configData.output)
+	  std::cout << "Output filter omitted. Using default output filter cout." << std::endl;
+  } else {
+	retval->setFilterType(std::string(configData.output));
+  }
+
+  if (configData.filename != NULL) {
+	retval->setOutputFilename(std::string(configData.filename));
+  }
+
+
   if (configData.interval == NULL) {
 	if (configData.debug)
 	  std::cout << "Intervall omitted. Setting default to hour" << std::endl;
@@ -167,6 +183,8 @@ const std::string& Config::getTokenId() { return _token; }
 const std::string& Config::getUnit() { return _unit; }
 const std::string& Config::getTimeInterval() { return _interval; }
 const std::string& Config::getExporterType() { return _exportertype; }
+const std::string& Config::getFilterType() { return _filtertype; };
+const std::string& Config::getOutputFilename() { return _outfilename;};
 bool Config::debug() { return _debug; }
 bool Config::verbose() { return _verbose; }
 
@@ -188,6 +206,12 @@ void Config::setTimeInterval(const std::string& interval) {
 }
 void Config::setExporterType(const std::string& exporter) {
   _exportertype = exporter;
+}
+void Config::setFilterType(const std::string& filter) {
+  _filtertype = filter;
+}
+void Config::setOutputFilename(const std::string& filename) {
+  _outfilename = filename;
 }
 void Config::enableDebug() {
   _debug = true;
