@@ -16,6 +16,10 @@ release: $(BUILDDIR)
 	@cd $(BUILDDIR) && $(CMAKECMD) -DCMAKE_BUILD_TYPE=Release
 	@cd $(BUILDDIR) && $(MAKE) $(MFLAGS) package
 
+install: $(BUILDDIR)
+	@cd $(BUILDDIR) && $(CMAKECMD) -DCMAKE_BUILD_TYPE=Release
+	@cd $(BUILDDIR) && $(MAKE) $(MFLAGS) install
+
 $(BUILDDIR):
 	@mkdir $(BUILDDIR)
 

@@ -6,7 +6,7 @@ if(POLICY CMP0011)
 endif(POLICY CMP0011)
 
 # have the full monty in makefiles
-set(CMAKE_VERBOSE_MAKEFILE false)
+set(CMAKE_VERBOSE_MAKEFILE true)
 
 set(V_MAJOR 0)
 set(V_MINOR 1)
@@ -54,13 +54,13 @@ set(CMAKE_CXX_FLAGS "-Wall ")
 include(CMakeBackwardCompatibilityCXX)
 
 # curl library
-include(FindCURL)
+include(FindCurl)
 if (CURL_FOUND)
   include_directories(${CURL_INCLUDE_DIR})
   include_directories(${CURL_INCLUDE_DIRS})
   link_directories(${CURL_LIBRARY_DIR})
-  link_libraries(${CURL_LIBRARY})
-  message(STATUS "CURL: '${CURL_LIBRARY}' -I${CURL_INCLUDE_DIR} -I${CURL_INCLUDE_DIRS}")
+  link_libraries(${CURL_LIBRARY_SHARED})
+  message(STATUS "CURL: '${CURL_LIBRARY_SHARED}' -I${CURL_INCLUDE_DIR} -I${CURL_INCLUDE_DIRS}")
 endif(CURL_FOUND)
 
 include(FindPopt)
