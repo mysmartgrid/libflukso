@@ -18,20 +18,18 @@
  *
  */
 
-#include "formatter-chumby-current.hpp"
-#include <algorithm>
-
+#include "formatter-chumby-lasthour.hpp"
 
 using namespace Flukso;
 
-void ChumbyCurrentFormatter::exportTimeseries(std::ostream& os) const {
+void ChumbyLastHourFormatter::exportTimeseries(std::ostream& os) const {
   Flukso::Timeseries::const_iterator ts_it;
 
   os << "<?xml version=\"1.0\"?>" << std::endl;
-  os << "<current_use><reading>" << std::endl;
-  // look for latest timestamp in the _values map
-  ts_it = std::max_element(_values->begin(), _values->end());
-  os << "  <time>"<<convertTimestamp((*ts_it).first)<<"</time><value>"
-    <<(*ts_it).second<<"</value>" << std::endl;
-  os << "</reading></current_use>" << std::endl;
+  os << "<last_hour>" << std::endl;
+  for( ts_it = _values->begin(); ts_it != _values->end(); ts_it++) {
+	os << "<reading><time>"<<convertTimestamp((*ts_it).first)<<"</time><value>"
+	  <<(*ts_it).second<<"</value></reading>" << std::endl;
+  }
+  os << "</last_hour>" << std::endl;
 }

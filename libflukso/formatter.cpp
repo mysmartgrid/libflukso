@@ -24,7 +24,10 @@
 #include <formatter-text.hpp>
 #include <formatter-xml.hpp>
 #include <formatter-chumby-current.hpp>
+#include <formatter-chumby-lasthour.hpp>
+#include <formatter-chumby-lastday.hpp>
 #include <sstream>
+#include <ctime>
 
 namespace Flukso {
 
@@ -38,6 +41,10 @@ namespace Flukso {
 	  return Flukso::Formatter::Ptr (new XMLFormatter(values));
 	} else if (config_option == std::string("chumby-current")) {
 	  return Flukso::Formatter::Ptr (new ChumbyCurrentFormatter(values));
+  } else if (config_option == std::string("chumby-lasthour")) {
+	  return Flukso::Formatter::Ptr (new ChumbyLastHourFormatter(values));
+  } else if (config_option == std::string("chumby-lastday")) {
+	  return Flukso::Formatter::Ptr (new ChumbyLastDayFormatter(values));
 	} else {
 	  std::ostringstream oss;
 	  oss << "Invalid formatter type \""<< config_option << "\"";
@@ -45,4 +52,15 @@ namespace Flukso {
 	}
   }
 
+
+  std::string Formatter::convertTimestamp(const long& timestamp) const{
+    time_t ts=timestamp;
+    struct tm* timeinfo;
+    char buffer[80];
+
+    timeinfo = localtime ( &ts);
+    strftime (buffer,80,"%H:%M:%S",timeinfo);
+    
+    return std::string(buffer);
+  }
 }

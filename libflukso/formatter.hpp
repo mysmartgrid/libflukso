@@ -40,6 +40,7 @@ namespace Flukso {
 
 	protected:
 	  Flukso::TimeseriesPtr _values;
+    std::string convertTimestamp (const long& timestamp) const;
 
 	private:
 	  Formatter (const Formatter& original);
