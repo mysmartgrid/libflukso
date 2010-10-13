@@ -57,7 +57,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	{ "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
 	  "Time interval to fetch (hour, day, month, year, night)", "interval" },
 	{ "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
-	{ "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml}", "string" },
+	{ "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lasthour|chumby-lastday}", "string" },
 	{ "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
 	{ "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
 	{ "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
@@ -81,82 +81,82 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
   if (poptRC < -1)
   {
 	std::cerr << "Commandline Parsing failed: " 
-	  << poptBadOption(optCon, POPT_BADOPTION_NOALIAS) 
-	  << ": " <<poptStrerror(poptRC) << std::endl;
-	poptFreeContext(optCon);
-	exit(10);
+    << poptBadOption(optCon, POPT_BADOPTION_NOALIAS) 
+    << ": " <<poptStrerror(poptRC) << std::endl;
+  poptFreeContext(optCon);
+  exit(10);
   }
 
   // Check cmdline arguments for plausibility
 
   if (configData.debug) 
-	retval->enableDebug();
+    retval->enableDebug();
 
   if (configData.verbose) 
-	retval->enableVerbose();
+    retval->enableVerbose();
 
   if (configData.token == NULL) {
-	std::cerr << std::endl << "Error: Token value MUST be provided for proper function." << std::endl << std::endl;
-	poptPrintHelp(optCon, stderr, 0);
-	poptFreeContext(optCon);
-	exit(11);
+    std::cerr << std::endl << "Error: Token value MUST be provided for proper function." << std::endl << std::endl;
+    poptPrintHelp(optCon, stderr, 0);
+    poptFreeContext(optCon);
+    exit(11);
   } else {
-	retval->setTokenId(std::string(configData.token));
+    retval->setTokenId(std::string(configData.token));
   }
 
   if (configData.sensor == NULL) {
-	std::cerr << std::endl << "Error: Sensor value MUST be provided for proper function." << std::endl << std::endl;
-	poptPrintHelp(optCon, stderr, 0);
-	poptFreeContext(optCon);
-	exit(11);
+    std::cerr << std::endl << "Error: Sensor value MUST be provided for proper function." << std::endl << std::endl;
+    poptPrintHelp(optCon, stderr, 0);
+    poptFreeContext(optCon);
+    exit(11);
   } else {
-	retval->setSensorId(std::string(configData.sensor));
+    retval->setSensorId(std::string(configData.sensor));
   }
 
 
   if (configData.baseURL == NULL) {
-	if (configData.debug)
-	  std::cout << "Base URL omitted. Using default URL https://api.mysmartgrid.de/sensor/" << std::endl;
+    if (configData.debug)
+      std::cout << "Base URL omitted. Using default URL https://api.mysmartgrid.de/sensor/" << std::endl;
   } else {
-	//std::cout << "baseurl: >" << configData.baseURL << "<" << std::endl;
-	retval->setBaseurl(std::string(configData.baseURL));
+    //std::cout << "baseurl: >" << configData.baseURL << "<" << std::endl;
+    retval->setBaseurl(std::string(configData.baseURL));
   }
 
   if (configData.unit == NULL) {
-	if (configData.debug)
-	  std::cout << "Unit omitted. Using default unit watt" << std::endl;
+    if (configData.debug)
+      std::cout << "Unit omitted. Using default unit watt" << std::endl;
   } else {
-	retval->setUnit(std::string(configData.unit));
+    retval->setUnit(std::string(configData.unit));
   }
 
   if (configData.format == NULL) {
-	if (configData.debug)
-	  std::cout << "Format omitted. Using default format text" << std::endl;
+    if (configData.debug)
+      std::cout << "Format omitted. Using default format text" << std::endl;
   } else {
-	retval->setFormatterType(std::string(configData.format));
+    retval->setFormatterType(std::string(configData.format));
   }
 
   if (configData.output == NULL) {
-	if (configData.output)
-	  std::cout << "Output filter omitted. Using default output filter cout." << std::endl;
+    if (configData.output)
+      std::cout << "Output filter omitted. Using default output filter cout." << std::endl;
   } else {
-	retval->setFilterType(std::string(configData.output));
+    retval->setFilterType(std::string(configData.output));
   }
 
   if (configData.filename != NULL) {
-	retval->setOutputFilename(std::string(configData.filename));
+    retval->setOutputFilename(std::string(configData.filename));
   }
 
 
   if (configData.interval == NULL) {
-	if (configData.debug)
-	  std::cout << "Intervall omitted. Setting default to hour" << std::endl;
+    if (configData.debug)
+      std::cout << "Intervall omitted. Setting default to hour" << std::endl;
   } else {
-	retval->setTimeInterval(std::string(configData.interval));
+    retval->setTimeInterval(std::string(configData.interval));
   }
 
   if (retval->verbose()) {
-	retval->printConfig();
+    retval->printConfig();
   }
 
   poptFreeContext(optCon);

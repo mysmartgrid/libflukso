@@ -32,18 +32,18 @@ namespace Flukso {
 	  explicit OutputFileFilter (const std::string& filename) :
 		Flukso::OutputFilter(), _filename(filename) {};
 	  virtual ~OutputFileFilter() {};
-	  virtual void render(const Flukso::Formatter::Ptr formatter) {
-		std::ofstream outfile;
-		outfile.open (_filename.c_str(), std::ofstream::out | std::ofstream::app);
-		outfile << *formatter;
-		outfile.close();
-	  };
-	  virtual void finalize() {};
+    virtual void render(const Flukso::Formatter::Ptr formatter) {
+      std::ofstream outfile;
+      outfile.open (_filename.c_str(), std::ofstream::out | std::ofstream::app);
+      outfile << *formatter;
+      outfile.close();
+    };
+    virtual void finalize() {};
 
-	private:
-	  OutputFileFilter (const OutputFileFilter& original);
-	  OutputFileFilter& operator= (const OutputFileFilter& rhs);
-	  std::string _filename;
+  private:
+    OutputFileFilter (const OutputFileFilter& original);
+    OutputFileFilter& operator= (const OutputFileFilter& rhs);
+    std::string _filename;
   };
 }
 

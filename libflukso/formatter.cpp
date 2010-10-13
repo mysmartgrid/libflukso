@@ -23,6 +23,7 @@
 #include "formatter.hpp"
 #include <formatter-text.hpp>
 #include <formatter-xml.hpp>
+#include <formatter-chumby-current.hpp>
 #include <sstream>
 
 namespace Flukso {
@@ -35,6 +36,8 @@ namespace Flukso {
 	  return Flukso::Formatter::Ptr (new TextFormatter(values));
 	} else if (config_option == std::string("xml")) {
 	  return Flukso::Formatter::Ptr (new XMLFormatter(values));
+	} else if (config_option == std::string("chumby-current")) {
+	  return Flukso::Formatter::Ptr (new ChumbyCurrentFormatter(values));
 	} else {
 	  std::ostringstream oss;
 	  oss << "Invalid formatter type \""<< config_option << "\"";
