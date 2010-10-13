@@ -29,16 +29,16 @@ namespace Flukso {
   OutputFilter::Ptr OutputFilter::buildFilter(
 	  const Config::Ptr& config) throw(ConfigurationException) 
   {
-	std::string filter_option = config->getFilterType();
-	if (filter_option == std::string("cout")) {
-	  return Flukso::OutputFilter::Ptr (new Flukso::OutputCoutFilter());
-	} else if (filter_option == std::string("file")) {
-	  std::string file_option = config->getOutputFilename();
-	  return Flukso::OutputFilter::Ptr (new Flukso::OutputFileFilter(file_option));
-	} else {
-	  std::ostringstream oss;
-	  oss << "Invalid output filter type \""<< filter_option << "\"";
-	  throw ConfigurationException(oss.str());
-	}
+    std::string filter_option = config->getFilterType();
+    if (filter_option == std::string("cout")) {
+      return Flukso::OutputFilter::Ptr (new Flukso::OutputCoutFilter());
+    } else if (filter_option == std::string("file")) {
+      std::string file_option = config->getOutputFilename();
+      return Flukso::OutputFilter::Ptr (new Flukso::OutputFileFilter(file_option));
+    } else {
+      std::ostringstream oss;
+      oss << "Invalid output filter type \""<< filter_option << "\"";
+      throw ConfigurationException(oss.str());
+    }
   }
 }

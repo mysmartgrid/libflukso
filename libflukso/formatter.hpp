@@ -26,15 +26,15 @@
 #include <error.hpp>
 
 namespace Flukso {
-  class Exporter {
+  class Formatter {
 	public:
-	  typedef std::tr1::shared_ptr<Exporter> Ptr;
-	  explicit Exporter (Flukso::TimeseriesPtr values) : _values(values) {};
-	  virtual ~Exporter() {};
+	  typedef std::tr1::shared_ptr<Formatter> Ptr;
+	  explicit Formatter (Flukso::TimeseriesPtr values) : _values(values) {};
+	  virtual ~Formatter() {};
 	  virtual void exportTimeseries( std::ostream& os) const = 0;
 	  virtual const std::string getType() const = 0;
 
-	  static Exporter::Ptr buildExporter(
+	  static Formatter::Ptr buildFormatter(
 		  const Config::Ptr& config,
 		  const TimeseriesPtr& values) throw(ConfigurationException);
 
@@ -42,12 +42,12 @@ namespace Flukso {
 	  Flukso::TimeseriesPtr _values;
 
 	private:
-	  Exporter (const Exporter& original);
-	  Exporter& operator= (const Exporter& rhs);
+	  Formatter (const Formatter& original);
+	  Formatter& operator= (const Formatter& rhs);
 
   };
 
-  inline std::ostream& operator<<(std::ostream& os, const Exporter& ex) {
+  inline std::ostream& operator<<(std::ostream& os, const Formatter& ex) {
 	ex.exportTimeseries(os);
 	return os;
   }

@@ -133,7 +133,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 	if (configData.debug)
 	  std::cout << "Format omitted. Using default format text" << std::endl;
   } else {
-	retval->setExporterType(std::string(configData.format));
+	retval->setFormatterType(std::string(configData.format));
   }
 
   if (configData.output == NULL) {
@@ -172,7 +172,7 @@ void Config::printConfig() {
   std::cout << " - token id: " << getTokenId() << std::endl;
   std::cout << " - unit: " << getUnit() << std::endl;
   std::cout << " - time interval: " << getTimeInterval() << std::endl;
-  std::cout << " - format: " << getExporterType() << std::endl;
+  std::cout << " - format: " << getFormatterType() << std::endl;
 }
 
 // getter methods
@@ -182,7 +182,7 @@ const std::string& Config::getSensorId() { return _sensor; }
 const std::string& Config::getTokenId() { return _token; }
 const std::string& Config::getUnit() { return _unit; }
 const std::string& Config::getTimeInterval() { return _interval; }
-const std::string& Config::getExporterType() { return _exportertype; }
+const std::string& Config::getFormatterType() { return _formattertype; }
 const std::string& Config::getFilterType() { return _filtertype; };
 const std::string& Config::getOutputFilename() { return _outfilename;};
 bool Config::debug() { return _debug; }
@@ -204,8 +204,8 @@ void Config::setUnit(const std::string& unit) {
 void Config::setTimeInterval(const std::string& interval) {
   _interval = interval;
 }
-void Config::setExporterType(const std::string& exporter) {
-  _exportertype = exporter;
+void Config::setFormatterType(const std::string& formatter) {
+  _formattertype = formatter;
 }
 void Config::setFilterType(const std::string& filter) {
   _filtertype = filter;

@@ -32,10 +32,10 @@ namespace Flukso {
 	  explicit OutputFileFilter (const std::string& filename) :
 		Flukso::OutputFilter(), _filename(filename) {};
 	  virtual ~OutputFileFilter() {};
-	  virtual void render(const Flukso::Exporter::Ptr exporter) {
+	  virtual void render(const Flukso::Formatter::Ptr formatter) {
 		std::ofstream outfile;
 		outfile.open (_filename.c_str(), std::ofstream::out | std::ofstream::app);
-		outfile << *exporter;
+		outfile << *formatter;
 		outfile.close();
 	  };
 	  virtual void finalize() {};

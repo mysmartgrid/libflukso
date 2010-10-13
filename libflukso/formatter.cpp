@@ -19,28 +19,27 @@
  */
 
 
-#ifndef LIBFLUKSO_EXPORTER_TEXT_HPP
-#define LIBFLUKSO_EXPORTER_TEXT_HPP 1
-
-#include <iostream>
-#include <flukso.hpp>
-#include <exporter.hpp>
+#include <common.hpp>
+#include "formatter.hpp"
+#include <formatter-text.hpp>
+#include <formatter-xml.hpp>
+#include <sstream>
 
 namespace Flukso {
-  class TextExporter : public Flukso::Exporter {
-	public:
-	  typedef std::tr1::shared_ptr<TextExporter> Ptr;
-	  explicit TextExporter (Flukso::TimeseriesPtr values) 
-		: Flukso::Exporter(values) { };
-	  virtual ~TextExporter() {};
-	  void exportTimeseries(std::ostream& os) const;
-	  virtual const std::string getType() const {return std::string("text"); };
 
-	private:
-	  TextExporter (const TextExporter& original);
-	  TextExporter& operator= (const TextExporter& rhs);
-  };
+  Formatter::Ptr Formatter::buildFormatter(
+	  const Config::Ptr& config,
+	  const TimeseriesPtr& values) throw(ConfigurationException){
+	std::string config_option = config->getFormatterType();
+	if (config_option == std::string("text")) {
+	  return Flukso::Formatter::Ptr (new TextFormatter(values));
+	} else if (config_option == std::string("xml")) {
+	  return Flukso::Formatter::Ptr (new XMLFormatter(values));
+	} else {
+	  std::ostringstream oss;
+	  oss << "Invalid formatter type \""<< config_option << "\"";
+	  throw ConfigurationException(oss.str());
+	}
+  }
 
 }
-
-#endif /* LIBFLUKSO_EXPORTER_TEXT_HPP */

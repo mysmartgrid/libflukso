@@ -18,18 +18,32 @@
  *
  */
 
-#include "exporter-xml.hpp"
 
-using namespace Flukso;
+#ifndef LIBFLUKSO_EXPORTER_XML_HPP
+#define LIBFLUKSO_EXPORTER_XML_HPP 1
 
-void XMLExporter::exportTimeseries(std::ostream& os) const {
-  Flukso::Timeseries::const_iterator ts_it;
+#include <iostream>
+#include <flukso.hpp>
+#include <formatter.hpp>
 
-  os << "<?xml version=\"1.0\"?>" << std::endl;
-  os << "<timeseries>" << std::endl;
-  for( ts_it = _values->begin(); ts_it != _values->end(); ts_it++) {
-	os << "<reading><time>"<<(*ts_it).first<<"</time><value>"
-	  <<(*ts_it).second<<"</value></reading>" << std::endl;
-  }
-  os << "</timeseries>" << std::endl;
+namespace Flukso {
+  class XMLFormatter : public Flukso::Formatter {
+	public:
+	  typedef std::tr1::shared_ptr<XMLFormatter> Ptr;
+	  XMLFormatter (Flukso::TimeseriesPtr values) 
+		: Flukso::Formatter(values) {};
+	  virtual ~XMLFormatter() {};
+	  void exportTimeseries(std::ostream& os) const;
+	  virtual const std::string getType() const {return std::string("xml"); };
+
+	private:
+	  XMLFormatter (const XMLFormatter& original);
+	  XMLFormatter& operator= (const XMLFormatter& rhs);
+	  
+  };
+  
 }
+
+
+#endif /* LIBFLUKSO_EXPORTER-XML_HPP */
+

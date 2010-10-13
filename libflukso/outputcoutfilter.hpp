@@ -30,8 +30,8 @@ namespace Flukso {
 	  typedef std::tr1::shared_ptr<OutputCoutFilter> Ptr;
 	  explicit OutputCoutFilter () : Flukso::OutputFilter() {};
 	  virtual ~OutputCoutFilter() {};
-	  virtual void render(const Flukso::Exporter::Ptr exporter) {
-		std::cout << *exporter;
+	  virtual void render(const Flukso::Formatter::Ptr formatter) {
+		std::cout << *formatter;
 	  };
 
 	private:

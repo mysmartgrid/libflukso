@@ -21,7 +21,7 @@
 #include <common.hpp>
 #include <flukso.hpp>
 #include <config.hpp>
-#include <exporter.hpp>
+#include <formatter.hpp>
 #include <outputfilter.hpp>
 #include <outputcoutfilter.hpp>
 #include <outputfilefilter.hpp>
@@ -33,9 +33,9 @@ int main (int argc, char const* argv[]) {
   try {
 	Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
 	Flukso::TimeseriesPtr ts(webservice->get_values());
-	Flukso::Exporter::Ptr exporter = Flukso::Exporter::buildExporter(config, ts);
+	Flukso::Formatter::Ptr formatter = Flukso::Formatter::buildFormatter(config, ts);
 	Flukso::OutputFilter::Ptr filter = Flukso::OutputFilter::buildFilter(config);
-	filter->render(exporter);
+	filter->render(formatter);
   } catch (Flukso::GenericException ge) {
 	std::cout << "Failed to retrieve values, reason:" << std::endl 
 	  << "  " << ge.reason() << std::endl;

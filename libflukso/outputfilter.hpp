@@ -21,7 +21,7 @@
 #ifndef LIBFLUKSO_OUTPUTFILTER_HPP
 #define LIBFLUKSO_OUTPUTFILTER_HPP 1
 
-#include <exporter.hpp>
+#include <formatter.hpp>
 #include <error.hpp>
 
 namespace Flukso {
@@ -30,7 +30,7 @@ namespace Flukso {
 	  typedef std::tr1::shared_ptr<OutputFilter> Ptr;
 	  explicit OutputFilter () {};
 	  virtual ~OutputFilter() {};
-	  virtual void render(const Flukso::Exporter::Ptr exporter) = 0;
+	  virtual void render(const Flukso::Formatter::Ptr formatter) = 0;
 
 	  static OutputFilter::Ptr buildFilter(
 		  const Config::Ptr& config) throw(ConfigurationException);
