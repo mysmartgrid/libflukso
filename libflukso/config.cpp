@@ -61,7 +61,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     { "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
       "Time interval to fetch (hour, day, month, year, night)", "interval" },
     { "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
-    { "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lasthour|chumby-lastday}", "string" },
+    { "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lastminute|chumby-lasthour|chumby-lastday}", "string" },
     { "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
     { "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
     { "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },

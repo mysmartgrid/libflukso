@@ -24,6 +24,7 @@
 #include <formatter-text.hpp>
 #include <formatter-xml.hpp>
 #include <formatter-chumby-current.hpp>
+#include <formatter-chumby-lastminute.hpp>
 #include <formatter-chumby-lasthour.hpp>
 #include <formatter-chumby-lastday.hpp>
 #include <sstream>
@@ -41,6 +42,8 @@ namespace Flukso {
 	  return Flukso::Formatter::Ptr (new XMLFormatter(values));
 	} else if (config_option == std::string("chumby-current")) {
 	  return Flukso::Formatter::Ptr (new ChumbyCurrentFormatter(values));
+  } else if (config_option == std::string("chumby-lastminute")) {
+	  return Flukso::Formatter::Ptr (new ChumbyLastMinuteFormatter(values));
   } else if (config_option == std::string("chumby-lasthour")) {
 	  return Flukso::Formatter::Ptr (new ChumbyLastHourFormatter(values));
   } else if (config_option == std::string("chumby-lastday")) {
