@@ -22,6 +22,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <popt.h>
+#include <sstream>
+
 
 using namespace Flukso;
 
@@ -32,36 +34,38 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
   poptContext optCon;
   int poptRC;
   static struct {
-	char* token;
-	char* sensor;
-	char* baseURL;
-	char* unit;
-	char* format;
-	char* output;
-	char* filename;
-	char* interval;
-	int debug;
-	long int maxAge;
-	long int criticalTimeDiff;
-	long int warningTimeDiff;
-	int mode;
-	bool verbose;
+    char* token;
+    char* sensor;
+    char* baseURL;
+    char* localip;
+    char* unit;
+    char* format;
+    char* output;
+    char* filename;
+    char* interval;
+    int debug;
+    long int maxAge;
+    long int criticalTimeDiff;
+    long int warningTimeDiff;
+    int mode;
+    bool verbose;
   } configData;
 
   struct poptOption cmdLineOpts[] =
   {
-	{ "debug", 'd', POPT_ARG_NONE, &configData.debug, 0, "Debug mode", NULL },
-	{ "token", 't', POPT_ARG_STRING, &configData.token, 0, "SmartGrid token", "string" },
-	{ "sensor", 's', POPT_ARG_STRING, &configData.sensor, 0, "SmartGrid sensor", "string" },
-	{ "baseURL", 'b', POPT_ARG_STRING, &configData.baseURL, 0, "SmartGrid Base-URL", "url" },
-	{ "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
-	  "Time interval to fetch (hour, day, month, year, night)", "interval" },
-	{ "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
-	{ "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lasthour|chumby-lastday}", "string" },
-	{ "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
-	{ "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
-	{ "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
-	POPT_AUTOHELP POPT_TABLEEND // Needed to terminate array
+    { "debug", 'd', POPT_ARG_NONE, &configData.debug, 0, "Debug mode", NULL },
+    { "token", 't', POPT_ARG_STRING, &configData.token, 0, "SmartGrid token", "string" },
+    { "sensor", 's', POPT_ARG_STRING, &configData.sensor, 0, "SmartGrid sensor", "string" },
+    { "baseURL", 'b', POPT_ARG_STRING, &configData.baseURL, 0, "SmartGrid Base-URL", "url" },
+    { "local-ip", 'l', POPT_ARG_STRING, &configData.localip, 0, "Local Flukso IP", "ip" },
+    { "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
+      "Time interval to fetch (hour, day, month, year, night)", "interval" },
+    { "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
+    { "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lasthour|chumby-lastday}", "string" },
+    { "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
+    { "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
+    { "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
+    POPT_AUTOHELP POPT_TABLEEND // Needed to terminate array
   };
 
   // Get CmdLine
@@ -69,9 +73,9 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 
   // Check arguemnts
   if (argc < 3) {
-	poptPrintHelp(optCon, stderr, 0);
-	poptFreeContext(optCon);
-	exit(1);
+    poptPrintHelp(optCon, stderr, 0);
+    poptFreeContext(optCon);
+    exit(1);
   }
 
   // Parse arguments
@@ -80,11 +84,11 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
   // Parsing successful?
   if (poptRC < -1)
   {
-	std::cerr << "Commandline Parsing failed: " 
-    << poptBadOption(optCon, POPT_BADOPTION_NOALIAS) 
-    << ": " <<poptStrerror(poptRC) << std::endl;
-  poptFreeContext(optCon);
-  exit(10);
+    std::cerr << "Commandline Parsing failed: " 
+      << poptBadOption(optCon, POPT_BADOPTION_NOALIAS) 
+      << ": " <<poptStrerror(poptRC) << std::endl;
+    poptFreeContext(optCon);
+    exit(10);
   }
 
   // Check cmdline arguments for plausibility
@@ -95,11 +99,27 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
   if (configData.verbose) 
     retval->enableVerbose();
 
+  if (configData.localip != NULL) {
+    // local mode
+    std::ostringstream oss;
+    oss << "http://" << configData.localip << "/sensor/";
+    retval->setBaseurl(oss.str());
+  } else if (configData.baseURL != NULL) {
+    //std::cout << "baseurl: >" << configData.baseURL << "<" << std::endl;
+    retval->setBaseurl(std::string(configData.baseURL));
+  } else {
+    if (configData.debug)
+      std::cout << "Base URL omitted and no local ip specified. Using default URL https://api.mysmartgrid.de/sensor/" << std::endl;
+  } 
+
   if (configData.token == NULL) {
-    std::cerr << std::endl << "Error: Token value MUST be provided for proper function." << std::endl << std::endl;
-    poptPrintHelp(optCon, stderr, 0);
-    poptFreeContext(optCon);
-    exit(11);
+    // not needed in local mode
+    if (configData.localip == NULL) {
+      std::cerr << std::endl << "Error: Token value MUST be provided for proper function." << std::endl << std::endl;
+      poptPrintHelp(optCon, stderr, 0);
+      poptFreeContext(optCon);
+      exit(11);
+    }
   } else {
     retval->setTokenId(std::string(configData.token));
   }
@@ -111,15 +131,6 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     exit(11);
   } else {
     retval->setSensorId(std::string(configData.sensor));
-  }
-
-
-  if (configData.baseURL == NULL) {
-    if (configData.debug)
-      std::cout << "Base URL omitted. Using default URL https://api.mysmartgrid.de/sensor/" << std::endl;
-  } else {
-    //std::cout << "baseurl: >" << configData.baseURL << "<" << std::endl;
-    retval->setBaseurl(std::string(configData.baseURL));
   }
 
   if (configData.unit == NULL) {
