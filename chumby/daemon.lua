@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env lua -lluarocks.loader
 -- This file is part of libflukso.
 --
 -- (c) Mathias Dalheimer <md@gonium.net>, 2010
@@ -16,22 +16,27 @@
 -- You should have received a copy of the GNU General Public License
 -- along with libflukso. If not, see <http://www.gnu.org/licenses/>.
 
+require 'posix'
+ox=posix
 
-print("Chumby Data Provider Daemon")
+
+ox.openlog('system')
+function log(line)
+  --ox.syslog(30, line)
+  print(line)
+end
+
+log("starting flukso data provider daemon")
 local config = {
   IP      = "192.168.1.102",
   SENSOR  = "a0e9cbec251ee1ef53310ccd64032d6a"
 }
-print("Using " .. config.IP)
-
-function sleep(n)
-  os.execute("sleep " .. tonumber(n))
-end
+log("Using " .. config.IP)
 
 function ticker()
   return coroutine.create (function ()
     while true do
-      sleep(1)
+      ox.sleep(1)
       coroutine.yield()
     end
   end
@@ -42,7 +47,7 @@ function timeactor(tupstream)
   return coroutine.create(function()
     while true do
       coroutine.resume(tupstream)
-      print("foo")
+      log("foo")
       coroutine.yield()
     end
   end
@@ -53,7 +58,7 @@ function controller(cupstream)
   return coroutine.create(function()
     while true do
       coroutine.resume(cupstream)
-      print("bar")
+      log("bar")
     end
   end
   )
