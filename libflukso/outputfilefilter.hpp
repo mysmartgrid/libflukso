@@ -34,7 +34,7 @@ namespace Flukso {
 	  virtual ~OutputFileFilter() {};
     virtual void render(const Flukso::Formatter::Ptr formatter) {
       std::ofstream outfile;
-      outfile.open (_filename.c_str(), std::ofstream::out | std::ofstream::app);
+      outfile.open (_filename.c_str(), std::ofstream::out);
       outfile << *formatter;
       outfile.close();
     };
