@@ -18,8 +18,6 @@
 
 require 'posix'
 ox=posix
-
-
 ox.openlog('system')
 function log(line)
   --ox.syslog(30, line)
@@ -29,9 +27,21 @@ end
 log("starting flukso data provider daemon")
 local config = {
   IP      = "192.168.1.102",
-  SENSOR  = "a0e9cbec251ee1ef53310ccd64032d6a"
+  SENSOR  = "a0e9cbec251ee1ef53310ccd64032d6a",
+  DATADIR = "/Users/md/tmp/flukso",
+  BINPATH = "/Users/md/Projects/mysmartgrid/libflukso.git",
+  CMD     = "/build/src/flukso-getvalues"
 }
 log("Using " .. config.IP)
+
+local command = {
+  lastvalue = config.BINPATH .. config.CMD .. 
+              " -l " .. config.IP .. 
+              " -s " .. config.SENSOR ..
+              " -n " .. config.DATADIR .. "/current_value.xml" ..
+              " -f chumby-current -o file "
+}
+ox.mkdir(config.DATADIR);
 
 function ticker()
   return coroutine.create (function ()
@@ -43,11 +53,13 @@ function ticker()
   )
 end
 
-function timeactor(tupstream)
+function timeactor(tupstream, command, filename)
   return coroutine.create(function()
+    local i=0;
     while true do
       coroutine.resume(tupstream)
-      log("foo")
+      log("running " .. command)
+      i = i + 1;
       coroutine.yield()
     end
   end
@@ -58,16 +70,18 @@ function controller(cupstream)
   return coroutine.create(function()
     while true do
       coroutine.resume(cupstream)
-      log("bar")
     end
   end
   )
 end
 
+local cmd=command.lastvalue
+log("Using command "..cmd);
 
 local chain = controller(
                 timeactor(
-                  ticker()
+                    ticker(), 
+                  cmd, "narf.dat"
                 )
               )
 
