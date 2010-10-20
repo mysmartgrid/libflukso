@@ -35,11 +35,16 @@ local config = {
 log("Using " .. config.IP)
 
 local command = {
-  lastvalue = config.BINPATH .. config.CMD .. 
+  last_reading = config.BINPATH .. config.CMD .. 
               " -l " .. config.IP .. 
               " -s " .. config.SENSOR ..
-              " -n " .. config.DATADIR .. "/current_value.xml" ..
-              " -f chumby-current -o file "
+              " -n " .. config.DATADIR .. "/last_reading" ..
+              " -f chumby-current -o file",
+  last_minute = config.BINPATH .. config.CMD .. 
+              " -l " .. config.IP .. 
+              " -s " .. config.SENSOR ..
+              " -n " .. config.DATADIR .. "/last_minute" ..
+              " -f chumby-lastminute -o file"
 }
 ox.mkdir(config.DATADIR);
 
@@ -53,13 +58,21 @@ function ticker()
   )
 end
 
-function timeactor(tupstream, command, filename)
+function timeactor(tupstream, command, interval)
   return coroutine.create(function()
-    local i=0;
+    local i=interval;
     while true do
+      if (i > 0) then
+        i = i - 1;
+      else
+        retval = os.execute(command)
+        if not retval==0 then
+          log("Error while running " .. command .. 
+              " -> return code " .. retval)
+        end
+        i=interval;
+      end
       coroutine.resume(tupstream)
-      log("running " .. command)
-      i = i + 1;
       coroutine.yield()
     end
   end
@@ -75,14 +88,11 @@ function controller(cupstream)
   )
 end
 
-local cmd=command.lastvalue
-log("Using command "..cmd);
-
-local chain = controller(
-                timeactor(
-                    ticker(), 
-                  cmd, "narf.dat"
-                )
-              )
+local chain = 
+controller(
+  timeactor(
+    timeactor(ticker(), command.last_reading, 2 )
+  , command.last_minute, 2)
+)
 
 coroutine.resume(chain);
