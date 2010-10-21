@@ -1,4 +1,4 @@
-#!/usr/bin/env lua -lluarocks.loader
+#!/usr/bin/env lua 
 -- This file is part of libflukso.
 --
 -- (c) Mathias Dalheimer <md@gonium.net>, 2010
@@ -16,22 +16,29 @@
 -- You should have received a copy of the GNU General Public License
 -- along with libflukso. If not, see <http://www.gnu.org/licenses/>.
 
+--todo: detect environment. if on chumby, adjust the module paths,
+--on all other platforms, require the luarocks loader.
+f=io.open("/bin/chumbyflash", "r");
+if f == nil then
+  -- this is not a chumby - assume a working luarocks installation.
+  require 'luarocks.loader'
+else
+  -- this is a chumby. set the path manually.
+  package.path="/mnt/storage/usr/share/lua/5.1//?.lua;/mnt/storage/usr/share/lua/5.1//?/init.lua;/root/.luarocks/share/lua/5.1//?.lua;/root/.luarocks/share/lua/5.1//?/init.lua;/mnt/storage/usr/share/lua/5.1//?.lua;/mnt/storage/usr/share/lua/5.1//?/init.lua;/mnt/storage/usr/share/lua/5.1//?.lua;/mnt/storage/usr/share/lua/5.1//?/init.lua;./?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua"
+  package.cpath="/mnt/storage/usr/lib/lua/5.1//?.so;/root/.luarocks/lib/lua/5.1//?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so"
+end
+
 require 'posix'
 ox=posix
 ox.openlog('system')
+require 'daemonconfig'
 function log(line)
   --ox.syslog(30, line)
   print(line)
 end
 
 log("starting flukso data provider daemon")
-local config = {
-  IP      = "192.168.1.102",
-  SENSOR  = "a0e9cbec251ee1ef53310ccd64032d6a",
-  DATADIR = "/Users/md/tmp/flukso",
-  BINPATH = "/Users/md/Projects/mysmartgrid/libflukso.git",
-  CMD     = "/build/src/flukso-getvalues"
-}
+
 log("Using " .. config.IP)
 
 local command = {
