@@ -28,10 +28,10 @@ void ChumbyCurrentFormatter::exportTimeseries(std::ostream& os) const {
   Flukso::Timeseries::const_iterator ts_it;
 
   os << "<?xml version=\"1.0\"?>" << std::endl;
-  os << "<current_use><reading>" << std::endl;
+  os << "<current_reading><reading>" << std::endl;
   // look for latest timestamp in the _values map
   ts_it = std::max_element(_values->begin(), _values->end());
   os << "  <time>"<<convertTimestamp((*ts_it).first)<<"</time><value>"
     <<(*ts_it).second<<"</value>" << std::endl;
-  os << "</reading></current_use>" << std::endl;
+  os << "</reading></current_reading>" << std::endl;
 }
