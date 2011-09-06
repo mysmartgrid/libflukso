@@ -43,6 +43,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     char* output;
     char* filename;
     char* interval;
+    char* version;
     int debug;
     long int maxAge;
     long int criticalTimeDiff;
@@ -64,6 +65,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     { "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lastminute|chumby-lasthour|chumby-lastday}", "string" },
     { "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
     { "filename", 'n', POPT_ARG_STRING, &configData.filename, 0, "Output filename (only use with -o file)", "string" },
+    { "version", 'V', POPT_ARG_STRING, &configData.version, 0, "API version", "string" },
     { "verbose", 'v', POPT_ARG_NONE, &configData.verbose, 0, "Verbose output", NULL },
     POPT_AUTOHELP POPT_TABLEEND // Needed to terminate array
   };
@@ -166,6 +168,13 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     retval->setTimeInterval(std::string(configData.interval));
   }
 
+  if (configData.interval == NULL) {
+    if (configData.debug)
+      std::cout << "Version omitted. Setting default to 1.0" << std::endl;
+  } else {
+    retval->setVersion(std::string(configData.interval));
+  }
+
   if (retval->verbose()) {
     retval->printConfig();
   }
@@ -184,6 +193,7 @@ void Config::printConfig() {
   std::cout << " - unit: " << getUnit() << std::endl;
   std::cout << " - time interval: " << getTimeInterval() << std::endl;
   std::cout << " - format: " << getFormatterType() << std::endl;
+  std::cout << " - version: " << getVersion() << std::endl;
 }
 
 // getter methods
@@ -194,8 +204,9 @@ const std::string& Config::getTokenId() { return _token; }
 const std::string& Config::getUnit() { return _unit; }
 const std::string& Config::getTimeInterval() { return _interval; }
 const std::string& Config::getFormatterType() { return _formattertype; }
-const std::string& Config::getFilterType() { return _filtertype; };
-const std::string& Config::getOutputFilename() { return _outfilename;};
+const std::string& Config::getFilterType() { return _filtertype; }
+const std::string& Config::getOutputFilename() { return _outfilename; }
+const std::string& Config::getVersion() { return _version; }
 bool Config::debug() { return _debug; }
 bool Config::verbose() { return _verbose; }
 
@@ -223,6 +234,9 @@ void Config::setFilterType(const std::string& filter) {
 }
 void Config::setOutputFilename(const std::string& filename) {
   _outfilename = filename;
+}
+void Config::setVersion(const std::string& version) {
+  _version = version;
 }
 void Config::enableDebug() {
   _debug = true;

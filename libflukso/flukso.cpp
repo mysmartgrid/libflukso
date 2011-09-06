@@ -144,7 +144,8 @@ void Webservice::run_query(std::string* buffer) throw (Flukso::CommunicationExce
   std::ostringstream oss;
   oss << _config->getBaseurl() << _config->getSensorId()
     << "?interval=" << _config->getTimeInterval() 
-    << "&unit=" << _config->getUnit();
+    << "&unit=" << _config->getUnit()
+    << "&version=" << _config->getVersion();
   std::string url(oss.str());
   if (_config->verbose()) 
     std::cout << "Query url: " << url << std::endl;
