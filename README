@@ -8,7 +8,7 @@ license.
 The code depends on json-c, curl and popt. It can be used to retrieve 
 values from a Flukso like this:
 
-./flukso-getvalue -d -t bb8640e074de14b9d444be7b1359707f -s 67e9fa794684e4902730be208e9d734e -i hour -v -m 3
+./flukso-getvalue -d -t bb8640e074de14b9d444be7b1359707f -s 67e9fa794684e4902730be208e9d734e -i hour -v -m 3 -V 1.0
 
 The sensor and token above match to the "official" Flukso of Fraunhofer ITWMs
 CC-HPC. It can be used for development.

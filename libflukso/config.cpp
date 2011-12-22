@@ -60,7 +60,7 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
     { "baseURL", 'b', POPT_ARG_STRING, &configData.baseURL, 0, "SmartGrid Base-URL", "url" },
     { "local-ip", 'l', POPT_ARG_STRING, &configData.localip, 0, "Local Flukso IP", "ip" },
     { "interval", 'i', POPT_ARG_STRING, &configData.interval, 0,
-      "Time interval to fetch (hour, day, month, year, night)", "interval" },
+      "Time interval to fetch (minute, hour, day, month, year, night)", "interval" },
     { "unit", 'u', POPT_ARG_STRING, &configData.unit, 0, "Unit to fetch (watt)", "unit" },
     { "format", 'f', POPT_ARG_STRING, &configData.format, 0, "Output format to use {text|xml|chumby-current|chumby-lastminute|chumby-lasthour|chumby-lastday}", "string" },
     { "output", 'o', POPT_ARG_STRING, &configData.output, 0, "Output destination: {cout|file}", "string" },
@@ -163,16 +163,16 @@ Config::Ptr Config::buildConfigFromCmdLine(int argc, char const* argv[]) {
 
   if (configData.interval == NULL) {
     if (configData.debug)
-      std::cout << "Intervall omitted. Setting default to hour" << std::endl;
+      std::cout << "Interval omitted. Setting default to hour" << std::endl;
   } else {
     retval->setTimeInterval(std::string(configData.interval));
   }
 
-  if (configData.interval == NULL) {
+  if (configData.version == NULL) {
     if (configData.debug)
       std::cout << "Version omitted. Setting default to 1.0" << std::endl;
   } else {
-    retval->setVersion(std::string(configData.interval));
+    retval->setVersion(std::string(configData.version));
   }
 
   if (retval->verbose()) {
