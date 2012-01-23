@@ -31,19 +31,19 @@
 int main (int argc, char const* argv[]) {
   Flukso::Config::Ptr config(Flukso::Config::buildConfigFromCmdLine(argc, argv));
   try {
-	Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
-	Flukso::TimeseriesPtr ts(webservice->get_values());
-	Flukso::Formatter::Ptr formatter = Flukso::Formatter::buildFormatter(config, ts);
-	Flukso::OutputFilter::Ptr filter = Flukso::OutputFilter::buildFilter(config);
-	filter->render(formatter);
+    Flukso::Webservice::Ptr webservice(new Flukso::Webservice(config));
+    Flukso::TimeseriesPtr ts(webservice->get_values());
+    Flukso::Formatter::Ptr formatter = Flukso::Formatter::buildFormatter(config, ts);
+    Flukso::OutputFilter::Ptr filter = Flukso::OutputFilter::buildFilter(config);
+    filter->render(formatter);
   } catch (Flukso::GenericException ge) {
-	std::cout << "Failed to retrieve values, reason:" << std::endl 
-	  << "  " << ge.reason() << std::endl;
-	return -1;
+    std::cout << "Failed to retrieve values, reason:" << std::endl 
+      << "  " << ge.reason() << std::endl;
+    return -1;
   }	catch (std::exception e) {
-	std::cout << "Unknown exception occured, reason:" << std::endl
-	  << "  " << e.what() << std::endl;
-	return -2;
+    std::cout << "Unknown exception occured, reason:" << std::endl
+      << "  " << e.what() << std::endl;
+    return -2;
   }
   return 0;
 }
