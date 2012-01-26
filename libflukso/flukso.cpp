@@ -114,8 +114,10 @@ TimeseriesPtr Webservice::parse_json_data(const char* inputData) throw (Flukso::
       if (json_object_get_type(myCurrentElement) == json_type_int) {
         value = json_object_get_int(myCurrentElement);
       } else {
-        std::cerr << "Second array element is neither string or integer at entry" << i
-          << ": " << json_object_get_string(myCurrent) << std::endl;
+        if (_config->debug()) {
+          std::cerr << "Second array element is neither string or integer at entry" << i
+            << ": " << json_object_get_string(myCurrent) << std::endl;
+        }
         continue;
       }
       ts->insert(std::pair<long,long>(timestamp, value));
@@ -144,8 +146,7 @@ void Webservice::run_query(std::string* buffer) throw (Flukso::CommunicationExce
   std::ostringstream oss;
   oss << _config->getBaseurl() << _config->getSensorId()
     << "?interval=" << _config->getTimeInterval() 
-    << "&unit=" << _config->getUnit()
-    << "&version=" << _config->getVersion();
+    << "&unit=" << _config->getUnit();
   std::string url(oss.str());
   if (_config->verbose()) 
     std::cout << "Query url: " << url << std::endl;
@@ -159,12 +160,18 @@ void Webservice::run_query(std::string* buffer) throw (Flukso::CommunicationExce
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);  
     // Adding Headers
     slist = curl_slist_append(slist, "Accept: application/json");
-    slist = curl_slist_append(slist, "X-Version: 1.0");
     std::ostringstream oss2;
     oss2 << "X-Token: " << _config->getTokenId();
     std::string token_header(oss2.str());
-    //std::cout << "Token header: " << token_header << std::endl;
+    if (_config->verbose()) 
+     std::cout << "Setting header: " << token_header << std::endl;
     slist = curl_slist_append(slist, token_header.c_str());
+    oss2.str(""); // reset to the empty string
+    oss2 << "X-Version: " << _config->getVersion();
+    std::string version_header(oss2.str());
+    if (_config->verbose()) 
+     std::cout << "Setting header: " << version_header << std::endl;
+    slist = curl_slist_append(slist, version_header.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 
     // Forward received data to own function

@@ -33,26 +33,26 @@
 namespace Flukso {
 
   Formatter::Ptr Formatter::buildFormatter(
-	  const Config::Ptr& config,
-	  const TimeseriesPtr& values) throw(ConfigurationException){
-	std::string config_option = config->getFormatterType();
-	if (config_option == std::string("text")) {
-	  return Flukso::Formatter::Ptr (new TextFormatter(values));
-	} else if (config_option == std::string("xml")) {
-	  return Flukso::Formatter::Ptr (new XMLFormatter(values));
-	} else if (config_option == std::string("chumby-current")) {
-	  return Flukso::Formatter::Ptr (new ChumbyCurrentFormatter(values));
-  } else if (config_option == std::string("chumby-lastminute")) {
-	  return Flukso::Formatter::Ptr (new ChumbyLastMinuteFormatter(values));
-  } else if (config_option == std::string("chumby-lasthour")) {
-	  return Flukso::Formatter::Ptr (new ChumbyLastHourFormatter(values));
-  } else if (config_option == std::string("chumby-lastday")) {
-	  return Flukso::Formatter::Ptr (new ChumbyLastDayFormatter(values));
-	} else {
-	  std::ostringstream oss;
-	  oss << "Invalid formatter type \""<< config_option << "\"";
-	  throw ConfigurationException(oss.str());
-	}
+      const Config::Ptr& config,
+      const TimeseriesPtr& values) throw(ConfigurationException){
+    std::string config_option = config->getFormatterType();
+    if (config_option == std::string("text")) {
+      return Flukso::Formatter::Ptr (new TextFormatter(values));
+    } else if (config_option == std::string("xml")) {
+      return Flukso::Formatter::Ptr (new XMLFormatter(values));
+    } else if (config_option == std::string("chumby-current")) {
+      return Flukso::Formatter::Ptr (new ChumbyCurrentFormatter(values));
+    } else if (config_option == std::string("chumby-lastminute")) {
+      return Flukso::Formatter::Ptr (new ChumbyLastMinuteFormatter(values));
+    } else if (config_option == std::string("chumby-lasthour")) {
+      return Flukso::Formatter::Ptr (new ChumbyLastHourFormatter(values));
+    } else if (config_option == std::string("chumby-lastday")) {
+      return Flukso::Formatter::Ptr (new ChumbyLastDayFormatter(values));
+    } else {
+      std::ostringstream oss;
+      oss << "Invalid formatter type \""<< config_option << "\"";
+      throw ConfigurationException(oss.str());
+    }
   }
 
 
@@ -63,7 +63,7 @@ namespace Flukso {
 
     timeinfo = localtime ( &ts);
     strftime (buffer,80,"%H:%M:%S",timeinfo);
-    
+
     return std::string(buffer);
   }
 }
