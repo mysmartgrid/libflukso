@@ -18,13 +18,13 @@
  *
  */
 
-#include <common.hpp>
-#include <flukso.hpp>
-#include <config.hpp>
-#include <formatter.hpp>
-#include <outputfilter.hpp>
-#include <outputcoutfilter.hpp>
-#include <outputfilefilter.hpp>
+#include <libflukso/common.hpp>
+#include <libflukso/flukso.hpp>
+#include <libflukso/config.hpp>
+#include <libflukso/formatter.hpp>
+#include <libflukso/outputfilter.hpp>
+#include <libflukso/outputcoutfilter.hpp>
+#include <libflukso/outputfilefilter.hpp>
 #include <iostream>
 #include <fstream>
 

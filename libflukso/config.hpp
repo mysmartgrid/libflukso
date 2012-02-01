@@ -21,7 +21,7 @@
 #ifndef LIBFLUKSO_CONFIG_HPP
 #define LIBFLUKSO_CONFIG_HPP 1
 
-#include <common.hpp>
+#include <libflukso/common.hpp>
 #include <string>
 
 

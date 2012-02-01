@@ -53,6 +53,11 @@ set(CMAKE_CXX_FLAGS "-Wall ")
 # Check for some compiler stuff
 include(CMakeBackwardCompatibilityCXX)
 
+# We depend on boost >= 1.46.1 because of the updated filesystem
+# library.
+SET(Boost_ADDITIONAL_VERSIONS "1.46.1" "1.48.0" "1.48")
+FIND_PACKAGE(Boost 1.46.1 COMPONENTS test_exec_monitor program_options filesystem system)
+
 # curl library
 include(FindCurl)
 if (CURL_FOUND)

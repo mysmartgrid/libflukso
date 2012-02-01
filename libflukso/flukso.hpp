@@ -21,10 +21,10 @@
 #ifndef LIBFLUKSO_FLUKSO_HPP
 #define LIBFLUKSO_FLUKSO_HPP 1
 
-#include <common.hpp>
-#include <config.hpp>
+#include <libflukso/common.hpp>
+#include <libflukso/config.hpp>
 #include <curl/curl.h>
-#include <error.hpp>
+#include <libflukso/error.hpp>
 #include <map>
 
 namespace Flukso {

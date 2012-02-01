@@ -21,8 +21,8 @@
 #ifndef LIBFLUKSO_OUTPUTFILTER_HPP
 #define LIBFLUKSO_OUTPUTFILTER_HPP 1
 
-#include <formatter.hpp>
-#include <error.hpp>
+#include <libflukso/formatter.hpp>
+#include <libflukso/error.hpp>
 
 namespace Flukso {
   class OutputFilter {

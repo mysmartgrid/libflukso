@@ -22,8 +22,8 @@
 #ifndef LIBFLUKSO_EXPORTER_HPP
 #define LIBFLUKSO_EXPORTER_HPP 1
 
-#include <flukso.hpp>
-#include <error.hpp>
+#include <libflukso/flukso.hpp>
+#include <libflukso/error.hpp>
 
 namespace Flukso {
   class Formatter {

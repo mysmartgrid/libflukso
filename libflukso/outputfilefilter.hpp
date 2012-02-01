@@ -21,7 +21,7 @@
 #ifndef LIBFLUKSO_OUTPUTFILEFILTER_HPP
 #define LIBFLUKSO_OUTPUTFILEFILTER_HPP 1
 
-#include <outputfilter.hpp>
+#include <libflukso/outputfilter.hpp>
 #include <iostream>
 #include <fstream>
 
