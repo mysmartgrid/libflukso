@@ -73,10 +73,11 @@ if (KLIO_FOUND)
   include_directories(${KLIO_INCLUDE_DIR})
   include_directories(${KLIO_INCLUDE_DIRS})
   link_directories(${KLIO_LIBRARY_DIR})
-  link_libraries(${KLIO_LIBRARY} ${KLIO_SQLITE3_LIBRARY})
-  message(STATUS "KLIO: '${KLIO_LIBRARY} ${KLIO_SQLITE3_LIBRARY}' -I${KLIO_INCLUDE_DIR} -I${KLIO_INCLUDE_DIRS}")
+  link_libraries(${KLIO_LIBRARY})
+  message(STATUS "KLIO: '${KLIO_LIBRARY}' -I${KLIO_INCLUDE_DIR} -I${KLIO_INCLUDE_DIRS}")
 endif(KLIO_FOUND)
 
+FIND_PACKAGE(Sqlite)
 
 include(FindPopt)
 if (POPT_FOUND)
