@@ -6,6 +6,7 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(flukso-getvalues ${flukso_getvalues_src})
 add_executable(flukso-archive ${flukso_archive_src})
 
+# todo: replace klio reference with klio module functions
 # Link the executable 
 target_link_libraries(flukso-getvalues flukso 
   ${CURL_LIBRARIES_SHARED} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})

@@ -33,7 +33,7 @@ namespace Flukso {
 	  static Config::Ptr buildConfigFromCmdLine(const int argc, char const* argv[]);
 	  void printConfig();
 	  Config():
-		_baseurl("https://api.mysmartgrid.de/sensor/"), _sensor("undefined"), 
+		_baseurl("https://api.mysmartgrid.de:8443/sensor/"), _sensor("undefined"), 
 		_token("undefined"), _unit("watt"), _interval("hour"),  _formattertype("text"), 
 		_filtertype("cout"), _outfilename("fluksovalues.txt"), _version("1.0"), _debug(false),
 		_verbose(false) {};
