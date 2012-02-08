@@ -1,18 +1,8 @@
 # -*- mode: cmake; -*-
 
-set(hdrs 
-  common.hpp
-  config.hpp
-  error.hpp
-  exporter.hpp
-  exporter-text.hpp
-  exporter-xml.hpp
-  flukso.hpp
-  outputfilter.hpp
-  outputcoutfilter.hpp
-)
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+file(GLOB hdrs *.hpp)
 file(GLOB all_flukso_src *.cpp *.hpp)
 set(flukso_src ${all_flukso_src})
 ADD_LIBRARY(flukso ${flukso_src})

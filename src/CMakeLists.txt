@@ -10,7 +10,7 @@ add_executable(flukso-archive ${flukso_archive_src})
 # Link the executable 
 target_link_libraries(flukso-getvalues flukso 
   ${CURL_LIBRARIES_SHARED} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(flukso-archive flukso klio klio_sqlite3
+target_link_libraries(flukso-archive flukso ${KLIO_LIBRARIES}
   ${CURL_LIBRARIES_SHARED} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
 
 # add programs to the install target - do not install the hashbench benchmark program.
