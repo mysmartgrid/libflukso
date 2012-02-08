@@ -27,7 +27,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 
   IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # On MacOS
-    find_library (CURL_LIBRARY_SHARED
+    find_library (CURL_LIBRARY
       NAMES libcurl.dylib
       HINTS ${CURL_HOME} ENV CURL_HOME
       PATH_SUFFIXES lib
@@ -45,7 +45,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 if (CURL_INCLUDE_DIR AND CURL_LIBRARY)
   set (CURL_FOUND TRUE)
   if (NOT CURL_FIND_QUIETLY)
-    message (STATUS "Found curl headers in ${CURL_INCLUDE_DIR} and libraries ${CURL_LIBRARY} ${CURL_LIBRARY_SHARED}")
+    message (STATUS "Found curl headers in ${CURL_INCLUDE_DIR} and libraries ${CURL_LIBRARY}")
   endif (NOT CURL_FIND_QUIETLY)
 else (CURL_INCLUDE_DIR AND CURL_LIBRARY)
   if (CURL_FIND_REQUIRED)

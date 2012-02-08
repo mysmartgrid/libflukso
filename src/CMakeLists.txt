@@ -9,9 +9,9 @@ add_executable(flukso-archive ${flukso_archive_src})
 # todo: replace klio reference with klio module functions
 # Link the executable 
 target_link_libraries(flukso-getvalues flukso 
-  ${CURL_LIBRARIES_SHARED} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
+  ${CURL_LIBRARY} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(flukso-archive flukso ${KLIO_LIBRARIES} 
-  ${CURL_LIBRARIES_SHARED} ${SQLITE3_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
+  ${CURL_LIBRARY} ${SQLITE3_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
 
 # add programs to the install target - do not install the hashbench benchmark program.
 INSTALL(PROGRAMS 
