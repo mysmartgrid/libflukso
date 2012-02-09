@@ -19,34 +19,34 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
     PATH_SUFFIXES include
   )
 
-#  find_library (KLIO_LIBRARY
-#    NAMES libklio.so
-#    HINTS ${KLIO_HOME} ENV KLIO_HOME
-#    PATH_SUFFIXES lib
-#  )
+  find_library (KLIO_LIBRARY
+    NAMES libklio.a
+    HINTS ${KLIO_HOME} ENV KLIO_HOME
+    PATH_SUFFIXES lib
+  )
 
 #  find_library (KLIO_SQLITE3_LIBRARY
 #    NAMES libklio_sqlite3.a
 #    HINTS ${KLIO_HOME} ENV KLIO_HOME
 #    PATH_SUFFIXES lib
 #  )
-
-  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # On MacOS
-    find_library (KLIO_LIBRARY
-      NAMES libklio.dylib
-      HINTS ${KLIO_HOME} ENV KLIO_HOME
-      PATH_SUFFIXES lib
-      )
-  ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # On Linux
-    find_library (KLIO_LIBRARY
-      NAMES libklio.a
-      HINTS ${KLIO_HOME} ENV KLIO_HOME
-      PATH_SUFFIXES lib
-      )
-  ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
+#
+#  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+#    # On MacOS
+#    find_library (KLIO_LIBRARY
+#      NAMES libklio.dylib
+#      HINTS ${KLIO_HOME} ENV KLIO_HOME
+#      PATH_SUFFIXES lib
+#      )
+#  ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+#    # On Linux
+#    find_library (KLIO_LIBRARY
+#      NAMES libklio.a
+#      HINTS ${KLIO_HOME} ENV KLIO_HOME
+#      PATH_SUFFIXES lib
+#      )
+#  ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+#
 
   if (KLIO_INCLUDE_DIR AND KLIO_LIBRARY)
   set (KLIO_FOUND TRUE)
