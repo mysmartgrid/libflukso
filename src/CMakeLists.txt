@@ -6,12 +6,28 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(flukso-getvalues ${flukso_getvalues_src})
 add_executable(flukso-archive ${flukso_archive_src})
 
-# todo: replace klio reference with klio module functions
+# TODO: Proper include for libklio
+# TODO: Use Boost::ASIO instead of curl
 # Link the executable 
 target_link_libraries(flukso-getvalues flukso 
-  ${CURL_LIBRARY} ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
+  ${CURL_LIBRARY} 
+  gss
+  ssl
+  rtmp
+  z
+  ldap
+  gnutls
+  ${POPT_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
+
 target_link_libraries(flukso-archive flukso ${KLIO_LIBRARIES} 
-  ${CURL_LIBRARY} ${SQLITE3_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
+  ${CURL_LIBRARY} 
+  gss
+  ssl
+  rtmp
+  z
+  ldap
+  gnutls
+  ${SQLITE3_LIBRARIES} ${JSON_LIBRARIES} ${Boost_LIBRARIES})
 
 # add programs to the install target - do not install the hashbench benchmark program.
 INSTALL(PROGRAMS 
