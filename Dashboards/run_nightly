@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# export https_proxy=http://squid.itwm.fhg.de:3128/
+
+export LANG=en_US.UTF-8
+export CTEST=/usr/bin/ctest
+
+echo "Running ctest"
+
+
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly.cmake,TARGET_ARCH=ar71xx,CTEST_PUSH_PACKAGES=1
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly.cmake,CTEST_PUSH_PACKAGES=1
+
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly.cmake,compiler=clang
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly.cmake,_git_branch=kk-dev
+
+#${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly_2.cmake
+# ${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly_x86-kk-dev.cmake
+
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoCoverage.cmake,_git_branch=kk-dev
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoCoverage.cmake,_git_branch=kk-dev,compiler=clang
+
