@@ -17,6 +17,7 @@ ${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly.cmake,_git_bran
 #${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly_2.cmake
 # ${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoNightly_x86-kk-dev.cmake
 
+${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoCoverage.cmake
 ${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoCoverage.cmake,_git_branch=kk-dev
 ${CTEST} -V -VV -S ${HOME}/libflukso/Dashboards/LibFluksoCoverage.cmake,_git_branch=kk-dev,compiler=clang
 
