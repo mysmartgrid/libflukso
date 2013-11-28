@@ -25,7 +25,7 @@
 #include <libklio/store.hpp>
 #include <libklio/store-factory.hpp>
 #include <libklio/sensor.hpp>
-#include <libklio/sensorfactory.hpp>
+#include <libklio/sensor-factory.hpp>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
@@ -120,13 +120,13 @@ int main(int argc,char** argv) {
 
     klio::SensorFactory::Ptr sensor_factory(new klio::SensorFactory());
     klio::StoreFactory::Ptr factory(new klio::StoreFactory()); 
-    klio::Store::Ptr store(factory->createStore(klio::SQLITE3, db));
+    klio::Store::Ptr store(factory->create_sqlite3_store(db));
     if (config->verbose())
       std::cout << "Opened " << store->str() << std::endl;
 
     store->initialize();
     std::vector<klio::Sensor::Ptr> sensors = 
-      store->getSensorById(vm["id"].as<std::string>());
+      store->get_sensors_by_external_id(vm["id"].as<std::string>());
     if (sensors.size() == 0) {
       std::cerr << "Sensor " << vm["id"].as<std::string>() 
         << " not available in this store. Create with klio-sensor." << std::endl;
