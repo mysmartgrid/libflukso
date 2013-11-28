@@ -13,6 +13,7 @@ target_link_libraries(flukso-getvalues flukso
   ${CURL_LIBRARY} 
   gss
   ssl
+  crypto
   rtmp
   z
   ldap
@@ -23,6 +24,7 @@ target_link_libraries(flukso-archive flukso ${KLIO_LIBRARIES}
   ${CURL_LIBRARY} 
   gss
   ssl
+  crypto
   rtmp
   z
   ldap
